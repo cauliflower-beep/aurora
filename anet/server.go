@@ -2,6 +2,7 @@ package anet
 
 import (
 	"aurora/aiface"
+	"errors"
 	"fmt"
 	"net"
 )
@@ -29,6 +30,18 @@ type Server struct {
 }
 //============== 实现 ziface.IServer 里的全部接口方法 ========
 
+//============== 定义当前客户端链接的handle api ===========
+//目前这个handle是写死的，以后优化应该由用户自定义handle
+func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
+	//回显业务
+	fmt.Println("[Conn Handle] CallBackToClient ... ")
+	if _, err := conn.Write(data[:cnt]); err !=nil {
+		fmt.Println("write back buf err ", err)
+		return errors.New("CallBackToClient error")
+	}
+	return nil
+}
+
 //Start 开启网络服务
 func (s *Server) Start() {
 	fmt.Printf("[START] Server name: %s,listenner at IP: %s, Port %d is starting\n", s.Name, s.IP, s.Port)
@@ -49,6 +62,9 @@ func (s *Server) Start() {
 		//已经监听成功
 		fmt.Println("start Zinx server  ", s.Name, " succ, now listenning...")
 
+		//TODO server.go 应该有一个自动生成ID的方法
+		var cid uint32
+		cid = 0
 		//3 启动server网络连接业务
 		for {
 			//3.1 阻塞等待客户端建立连接请求,如果有客户端链接过来，阻塞会返回
@@ -57,23 +73,15 @@ func (s *Server) Start() {
 				fmt.Println("Accept err ", err)
 				continue
 			}
-			fmt.Println("Get conn remote addr = ", conn.RemoteAddr().String())
+			//3.2 TODO Server.Start() 设置服务器最大连接控制,如果超过最大连接，那么则关闭此新的连接
 
-			//3.2 链接建立，做一个最基本的内容回显业务
-			go func(){
-				for{
-					buf := make([]byte,512)
-					cnt,err := conn.Read(buf)
-					if err != nil{
-						fmt.Println("recv buf err",err)
-						continue
-					}
-					//若读取成功，则回显
-					if _,err:=conn.Write(buf[:cnt]);err!=nil{
-						fmt.Println("write back buf err",err)
-					}
-				}
-			}()
+			//3.3 处理该新连接请求的 业务 方法， 此时应该有 handler 和 conn是绑定的
+			dealConn := NewConntion(conn, cid, CallBackToClient)
+			cid ++
+
+			//3.4 启动当前链接的处理业务
+			go dealConn.Start()
+
 		}
 	}()
 
