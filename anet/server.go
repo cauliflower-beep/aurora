@@ -2,6 +2,7 @@ package anet
 
 import (
 	"aurora/aiface"
+	"aurora/utils"
 	"fmt"
 	"net"
 )
@@ -110,10 +111,10 @@ func NewServer(name string) aiface.IServer {
 	printLogo()
 
 	s := &Server{
-		Name:       name,
-		IPVersion:  "tcp4",
-		IP:         "0.0.0.0",
-		Port:       8999,
+		Name :utils.GlobalObject.Name,
+		IPVersion:"tcp4",
+		IP:utils.GlobalObject.Host,
+		Port:utils.GlobalObject.TcpPort,
 		Router: nil,
 	}
 
