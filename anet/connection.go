@@ -13,11 +13,11 @@ type Connection struct {
 	//当前连接的关闭状态
 	isClosed bool
 
-	//该连接的处理方法api
-	handleAPI aiface.HandFunc
-
 	//告知该链接已经退出/停止的channel
 	ExitBuffChan chan bool
+
+	//该连接的处理方法router
+	Router  aiface.IRouter
 
 	//给缓冲队列发送数据的channel，
 	// 如果向缓冲队列发送数据，那么把数据发送到这个channel下
@@ -27,12 +27,12 @@ type Connection struct {
 
 
 //初始化连接模块的方法
-func NewConntion(conn *net.TCPConn, connID uint32, callback_api aiface.HandFunc) *Connection{
+func NewConntion(conn *net.TCPConn, connID uint32, router aiface.IRouter) *Connection{
 	c := &Connection{
 		Conn:     conn,
 		ConnID:   connID,
 		isClosed: false,
-		handleAPI: callback_api,
+		Router: router,		//之前的回调函数就不需要了，直接改成一个路由
 		ExitBuffChan: make(chan bool, 1),
 		//		SendBuffChan: make(chan []byte, 512),
 	}
@@ -56,12 +56,18 @@ func (c *Connection) StartReader() {
 			continue
 		}
 		fmt.Println(buf[:cnt])
-		//调用当前链接业务，这个业务可能是回显内容，或者其他的业务
-		if err := c.handleAPI(c.Conn, buf, cnt); err !=nil {
-			fmt.Println("connID ", c.ConnID, " handle is error")
-			//c.ExitBuffChan <- true
-			return
+		//得到当前客户端请求的Request数据
+		req := Request{
+			conn:c,
+			data:buf,
 		}
+		//从路由Routers 中找到注册绑定Conn的对应Handle
+		go func (request aiface.IRequest) {
+			//执行注册的路由方法
+			c.Router.PreHandle(request)
+			c.Router.Handle(request)
+			c.Router.PostHandle(request)
+		}(&req)
 	}
 
 
