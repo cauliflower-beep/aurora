@@ -21,6 +21,9 @@ type Connection struct {
 	//该连接的处理方法router
 	Router  aiface.IRouter
 
+	//消息管理MsgId和对应处理方法的消息管理模块
+	MsgHandler aiface.IMsgHandle
+
 	//给缓冲队列发送数据的channel，
 	// 如果向缓冲队列发送数据，那么把数据发送到这个channel下
 	//	SendBuffChan chan []byte
@@ -29,13 +32,13 @@ type Connection struct {
 
 
 //初始化连接模块的方法
-func NewConntion(conn *net.TCPConn, connID uint32, router aiface.IRouter) *Connection{
+func NewConntion(conn *net.TCPConn, connID uint32,msgHandler aiface.IMsgHandle) *Connection{
 	c := &Connection{
 		Conn:     conn,
 		ConnID:   connID,
 		isClosed: false,
-		Router: router,		//之前的回调函数就不需要了，直接改成一个路由
 		ExitBuffChan: make(chan bool, 1),
+		MsgHandler: msgHandler,
 		//		SendBuffChan: make(chan []byte, 512),
 	}
 
@@ -86,13 +89,9 @@ func (c *Connection) StartReader() {
 			conn:c,
 			msg:msg,
 		}
-		//从路由Routers 中找到注册绑定Conn的对应Handle
-		go func (request aiface.IRequest) {
-			//执行注册的路由方法
-			c.Router.PreHandle(request)
-			c.Router.Handle(request)
-			c.Router.PostHandle(request)
-		}(&req)
+		//从绑定好的消息和对应的处理方法中执行对应的Handle方法
+		//根据绑定好的msgid找到对应的api业务执行
+		go c.MsgHandler.DoMsgHandler(&req)
 	}
 
 
@@ -152,10 +151,6 @@ func (c *Connection) RemoteAddr() net.Addr {
 	return c.Conn.RemoteAddr()
 }
 
-//直接将数据发送数据给远程的TCP客户端
-func (c *Connection) Send(data []byte) error {
-	return nil
-}
 
 //将数据发送给缓冲队列，通过专门从缓冲队列读数据的go写给客户端
 func (c *Connection) SendBuff(data []byte) error {

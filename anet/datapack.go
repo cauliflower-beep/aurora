@@ -26,15 +26,16 @@ func(dp *DataPack) Pack(msg aiface.IMessage)([]byte, error) {
 	//创建一个存放bytes字节的缓冲
 	dataBuff := bytes.NewBuffer([]byte{})
 
-	//写msgID
+	//写dataLen
 	if err := binary.Write(dataBuff, binary.LittleEndian, msg.GetMsgId()); err != nil {
 		return nil, err
 	}
 
-	//写dataLen
+	//写msgID
 	if err := binary.Write(dataBuff, binary.LittleEndian, msg.GetDataLen()); err != nil {
 		return nil, err
 	}
+
 
 	//写data数据
 	if err := binary.Write(dataBuff, binary.LittleEndian, msg.GetData()); err != nil {

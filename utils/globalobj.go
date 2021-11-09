@@ -7,7 +7,7 @@ import (
 )
 
 /*
-	存储一切有关Zinx框架的全局参数，供其他模块使用
+	存储一切有关Aurora框架的全局参数，供其他模块使用
 	一些参数也可以通过 用户根据 zinx.json来配置
 */
 type GlobalObj struct {
@@ -20,9 +20,9 @@ type GlobalObj struct {
 	Name      string         //当前服务器名称
 
 	/*
-		Zinx
+		Aurora
 	 */
-	Version   string         //当前Zinx版本号
+	Version   string         //当前Aurora版本号
 	MaxPacketSize uint32	 //都需数据包的最大值
 	MaxConn       int    	//当前服务器主机允许的最大链接个数
 }

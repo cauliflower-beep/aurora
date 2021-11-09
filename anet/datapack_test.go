@@ -75,19 +75,22 @@ func TestDataPack(t *testing.T) {
 	//创建一个封包对象 dp
 	dp := NewDataPack()
 
-	//封装一个msg1包
+	//模拟粘包过程，封装两个msg包一起发送，看是否能分开获取
+	//封装第一个msg1包
 	msg1 := &Message{
 		Id:0,
 		DataLen:5,
 		Data:[]byte{'h', 'e', 'l', 'l', 'o'},
 	}
 
+	//打包msg1，变成一个二进制文件
 	sendData1, err := dp.Pack(msg1)
 	if err!= nil{
 		fmt.Println("client pack msg1 err:", err)
 		return
 	}
 
+	//封装第二个msg包
 	msg2 := &Message{
 		Id:1,
 		DataLen:7,

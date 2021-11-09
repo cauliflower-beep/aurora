@@ -7,7 +7,7 @@ import (
 	"net"
 )
 
-var zinxLogo = `                                        
+var auroraLogo = `                                        
  _____  _   _   ____  ___    ____  _____ 
 (____ || | | | / ___)/ _ \  / ___)(____ |
 / ___ || |_| || |   | |_| || |    / ___ |
@@ -27,8 +27,8 @@ type Server struct {
 	IP string
 	//服务绑定的端口
 	Port int
-	//当前Server由用户绑定的回调router,也就是Server注册的链接对应的处理业务
-	Router aiface.IRouter
+	//当前Server的消息管理模块，用来绑定MsgId和对应的处理方法
+	msgHandler aiface.IMsgHandle
 }
 //============== 实现 ziface.IServer 里的全部接口方法 ========
 
@@ -53,7 +53,7 @@ func (s *Server) Start() {
 		}
 
 		//已经监听成功
-		fmt.Println("start Zinx server  ", s.Name, " succ, now listenning...")
+		fmt.Println("start Aurora server  ", s.Name, " succ, now listenning...")
 
 		//TODO server.go 应该有一个自动生成ID的方法
 		var cid uint32
@@ -69,7 +69,7 @@ func (s *Server) Start() {
 			//3.2 TODO Server.Start() 设置服务器最大连接控制,如果超过最大连接，那么则关闭此新的连接
 
 			//3.3 处理该新连接请求的 业务 方法， 此时应该有 handler 和 conn是绑定的
-			dealConn := NewConntion(conn, cid, s.Router)
+			dealConn := NewConntion(conn, cid, s.msgHandler)
 			cid ++
 
 			//3.4 启动当前链接的处理业务
@@ -99,23 +99,21 @@ func (s *Server) Serve() {
 }
 
 //路由功能：给当前服务注册一个路由业务方法，供客户端链接处理使用
-func (s *Server)AddRouter(router aiface.IRouter) {
-	s.Router = router
-
-	fmt.Println("Add Router succ! " )
+func (s *Server)AddRouter(msgId uint32,router aiface.IRouter) {
+	s.msgHandler.AddRouter(msgId, router)
 }
 
 
 //NewServer 创建一个服务器句柄
 func NewServer(name string) aiface.IServer {
 	printLogo()
-
+	utils.GlobalObject.Reload()
 	s := &Server{
 		Name :utils.GlobalObject.Name,
 		IPVersion:"tcp4",
 		IP:utils.GlobalObject.Host,
 		Port:utils.GlobalObject.TcpPort,
-		Router: nil,
+		msgHandler: NewMsgHandle(),
 	}
 
 	return s
@@ -124,7 +122,7 @@ func NewServer(name string) aiface.IServer {
 
 
 func printLogo() {
-	fmt.Println(zinxLogo)
+	fmt.Println(auroraLogo)
 	fmt.Println(topLine)
 	fmt.Println(bottomLine)
 }
