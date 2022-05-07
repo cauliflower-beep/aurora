@@ -3,14 +3,14 @@ package aiface
 import "net"
 
 //定义连接模块的抽象层
-type IConnection interface{
+type IConnection interface {
 	//启动链接 让当前的连接准备开始工作
 	Start()
 
 	//停止链接 结束当前连接的工作
 	Stop()
 
-	//获取当前连接的绑定socket comm
+	//获取当前连接的绑定socket conn
 	GetTCPConnection() *net.TCPConn
 
 	//获取当前连接模块的连接ID

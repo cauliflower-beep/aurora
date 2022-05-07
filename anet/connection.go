@@ -1,11 +1,16 @@
 package anet
+
 import (
+	"aurora/aiface"
 	"errors"
 	"fmt"
 	"io"
 	"net"
-	"aurora/aiface"
 )
+
+/*
+连接层的抽象是把链接和数据以及处理接口封装在一起
+*/
 
 type Connection struct {
 	//当前连接的socket TCP套接字
@@ -19,7 +24,7 @@ type Connection struct {
 	ExitBuffChan chan bool
 
 	//该连接的处理方法router
-	Router  aiface.IRouter
+	Router aiface.IRouter
 
 	//消息管理MsgId和对应处理方法的消息管理模块
 	MsgHandler aiface.IMsgHandle
@@ -30,15 +35,14 @@ type Connection struct {
 
 }
 
-
 //初始化连接模块的方法
-func NewConntion(conn *net.TCPConn, connID uint32,msgHandler aiface.IMsgHandle) *Connection{
+func NewConntion(conn *net.TCPConn, connID uint32, msgHandler aiface.IMsgHandle) *Connection {
 	c := &Connection{
-		Conn:     conn,
-		ConnID:   connID,
-		isClosed: false,
+		Conn:         conn,
+		ConnID:       connID,
+		isClosed:     false,
 		ExitBuffChan: make(chan bool, 1),
-		MsgHandler: msgHandler,
+		MsgHandler:   msgHandler,
 		//		SendBuffChan: make(chan []byte, 512),
 	}
 
@@ -51,7 +55,7 @@ func (c *Connection) StartReader() {
 	defer fmt.Println(c.RemoteAddr().String(), " conn reader exit!")
 	defer c.Stop()
 
-	for  {
+	for {
 		//读取我们最大的数据到buf中，目前最大的是512字节
 		// 创建拆包解包的对象
 		dp := NewDataPack()
@@ -65,7 +69,7 @@ func (c *Connection) StartReader() {
 		}
 
 		//拆包，得到msgid 和 datalen 放在msg中
-		msg , err := dp.Unpack(headData)
+		msg, err := dp.Unpack(headData)
 		if err != nil {
 			fmt.Println("unpack error ", err)
 			c.ExitBuffChan <- true
@@ -86,14 +90,13 @@ func (c *Connection) StartReader() {
 		msg.SetData(data)
 		//得到当前客户端请求的Request数据
 		req := Request{
-			conn:c,
-			msg:msg,
+			conn: c,
+			msg:  msg,
 		}
 		//从绑定好的消息和对应的处理方法中执行对应的Handle方法
 		//根据绑定好的msgid找到对应的api业务执行
 		go c.MsgHandler.DoMsgHandler(&req)
 	}
-
 
 }
 
@@ -142,7 +145,7 @@ func (c *Connection) GetTCPConnection() *net.TCPConn {
 }
 
 //获取当前连接ID
-func (c *Connection) GetConnID() uint32{
+func (c *Connection) GetConnID() uint32 {
 	return c.ConnID
 }
 
@@ -150,7 +153,6 @@ func (c *Connection) GetConnID() uint32{
 func (c *Connection) RemoteAddr() net.Addr {
 	return c.Conn.RemoteAddr()
 }
-
 
 //将数据发送给缓冲队列，通过专门从缓冲队列读数据的go写给客户端
 func (c *Connection) SendBuff(data []byte) error {
@@ -167,7 +169,7 @@ func (c *Connection) SendMsg(msgId uint32, data []byte) error {
 	binaryMsg, err := dp.Pack(NewMsgPackage(msgId, data))
 	if err != nil {
 		fmt.Println("Pack error msg id = ", msgId)
-		return  errors.New("Pack error msg ")
+		return errors.New("Pack error msg ")
 	}
 
 	//写回客户端
