@@ -23,11 +23,11 @@ type Connection struct {
 	//告知该链接已经退出/停止的channel
 	ExitBuffChan chan bool
 
-	//该连接的处理方法router
-	Router aiface.IRouter
-
 	//消息管理MsgId和对应处理方法的消息管理模块
 	MsgHandler aiface.IMsgHandle
+
+	// 无缓冲管道，用于读、写两个goroutine之间的消息通信
+	msgChan chan []byte
 
 	//给缓冲队列发送数据的channel，
 	// 如果向缓冲队列发送数据，那么把数据发送到这个channel下
@@ -43,10 +43,36 @@ func NewConntion(conn *net.TCPConn, connID uint32, msgHandler aiface.IMsgHandle)
 		isClosed:     false,
 		ExitBuffChan: make(chan bool, 1),
 		MsgHandler:   msgHandler,
+		msgChan:      make(chan []byte),
 		//		SendBuffChan: make(chan []byte, 512),
 	}
 
 	return c
+}
+
+/*
+	StartWriter 写消息Goroutine， 用户将数据发送给客户端
+	读写分离的好处是，后续可以针对这两个go程扩展业务
+	例如，涉及到数据库操作，读写分离还是很有必要的
+*/
+func (c *Connection) StartWriter() {
+
+	defer fmt.Println(c.RemoteAddr().String(), " conn Writer exit!")
+	defer c.Stop()
+
+	for {
+		select {
+		case data := <-c.msgChan:
+			//有数据要写给客户端
+			if _, err := c.Conn.Write(data); err != nil {
+				fmt.Println("Send Data error:, ", err, " Conn Writer exit")
+				return
+			}
+		case <-c.ExitBuffChan:
+			//conn已经关闭
+			return
+		}
+	}
 }
 
 //连接的读业务方法
@@ -56,7 +82,6 @@ func (c *Connection) StartReader() {
 	defer c.Stop()
 
 	for {
-		//读取我们最大的数据到buf中，目前最大的是512字节
 		// 创建拆包解包的对象
 		dp := NewDataPack()
 
@@ -104,7 +129,11 @@ func (c *Connection) StartReader() {
 func (c *Connection) Start() {
 
 	//开启处理该链接读取到客户端数据之后的请求业务
+	//开启用户从客户端读取数据流程的Goroutine
 	go c.StartReader()
+
+	// 开启用于写回客户端数据流程的Goroutine
+	go c.StartWriter()
 
 	//for {
 	//	select {
@@ -114,8 +143,6 @@ func (c *Connection) Start() {
 	//	}
 	//}
 
-	//1 开启用于写回客户端数据流程的Goroutine
-	//2 开启用户从客户端读取数据流程的Goroutine
 }
 
 //停止连接，结束当前连接状态M
@@ -131,11 +158,15 @@ func (c *Connection) Stop() {
 	// 关闭socket链接
 	c.Conn.Close()
 
-	//通知从缓冲队列读数据的业务，该链接已经关闭
+	// 告知writer关闭
 	c.ExitBuffChan <- true
 
-	//关闭该链接全部管道
-	//close(c.ExitBuffChan)
+	//通知从缓冲队列读数据的业务，该链接已经关闭
+	//c.ExitBuffChan <- true
+
+	//关闭该链接全部管道 回收资源
+	close(c.ExitBuffChan)
+	close(c.msgChan)
 	//close(c.SendBuffChan)
 }
 
@@ -172,12 +203,20 @@ func (c *Connection) SendMsg(msgId uint32, data []byte) error {
 		return errors.New("Pack error msg ")
 	}
 
-	//写回客户端
-	if _, err := c.Conn.Write(binaryMsg); err != nil {
-		fmt.Println("Write msg id ", msgId, " error ")
-		c.ExitBuffChan <- true
-		return errors.New("conn Write error")
-	}
+	/*
+		旧版本框架中，读写放在一起处理了，读到数据之后在同一协程中写回数据给客户端。
+		这样的扩展性是较差的，例如想要加入消息队列，就很不方便了；
+		为了实现解耦，可以采用读写分离的方案来操作。
+	*/
+	//写回客户端(旧版本)
+	//if _, err := c.Conn.Write(binaryMsg); err != nil {
+	//	fmt.Println("Write msg id ", msgId, " error ")
+	//	c.ExitBuffChan <- true
+	//	return errors.New("conn Write error")
+	//}
+
+	//将数据写入管道，发送给写go程
+	c.msgChan <- binaryMsg
 
 	return nil
 }

@@ -10,14 +10,14 @@ import (
 
 /*
 模拟客户端
-*/
-func main() {
-	fmt.Println("client0 starting...")
-	time.Sleep(1 * time.Second)
+ */
+func main(){
+	fmt.Println("client1 starting...")
+	time.Sleep(1 *time.Second)
 	//连接远程服务器，得到一个conn连接
-	conn, err := net.Dial("tcp", "127.0.0.1:8999")
-	if err != nil {
-		fmt.Println("client0 start err,exit!")
+	conn ,err := net.Dial("tcp","127.0.0.1:8999")
+	if err != nil{
+		fmt.Println("client1 start err,exit!")
 		return
 	}
 
@@ -25,10 +25,7 @@ func main() {
 	for {
 		//发封包message消息
 		dp := anet.NewDataPack()
-		m := anet.NewMsgPackage(0, []byte("Aurora V0.6 Client0 Test Message"))
-		fmt.Println(m)
-		msg, err := dp.Pack(m)
-		fmt.Println(msg)
+		msg, err := dp.Pack(anet.NewMsgPackage(1, []byte("Aurora V0.6 Client1 Test Message")))
 		if err != nil {
 			fmt.Println("pack error ", err)
 			return
@@ -65,7 +62,7 @@ func main() {
 				return
 			}
 
-			fmt.Printf("==> Recv Msg: ID=", msg.Id, ", len=", msg.DataLen, ", data=", string(msg.Data))
+			fmt.Println("==> Recv Msg: ID=", msg.Id, ", len=", msg.DataLen, ", data=", string(msg.Data))
 		}
 
 		time.Sleep(1 * time.Second)
