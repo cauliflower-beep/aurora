@@ -2,6 +2,7 @@ package anet
 
 import (
 	"aurora/aiface"
+	"aurora/utils"
 	"errors"
 	"fmt"
 	"io"
@@ -120,7 +121,21 @@ func (c *Connection) StartReader() {
 		}
 		//从绑定好的消息和对应的处理方法中执行对应的Handle方法
 		//根据绑定好的msgid找到对应的api业务执行
-		go c.MsgHandler.DoMsgHandler(&req)
+		/*
+			参考imsghandler层的注释
+			这里原来采用的方案是，每一个reader都启动一个处理消息的go程，
+			现在改为不管客户端的请求数量有多大，都只启动固定数量的go程，
+			好处是cpu在调度go程时只需要在10个之间进行切换就可以了，可以很大程度上节约资源
+		*/
+		//go c.MsgHandler.DoMsgHandler(&req)
+
+		if utils.GlobalObject.WorkerPoolSize > 0 {
+			//已经启动工作池机制，将消息交给Worker处理
+			c.MsgHandler.SendMsgToTaskQueue(&req)
+		} else {
+			//从绑定好的消息和对应的处理方法中执行对应的Handle方法
+			go c.MsgHandler.DoMsgHandler(&req)
+		}
 	}
 
 }
@@ -205,7 +220,8 @@ func (c *Connection) SendMsg(msgId uint32, data []byte) error {
 
 	/*
 		旧版本框架中，读写放在一起处理了，读到数据之后在同一协程中写回数据给客户端。
-		这样的扩展性是较差的，例如想要加入消息队列，就很不方便了；
+		并发量小的时候这样没什么问题，并发量大就不好处理了。
+		并且这样的扩展性是较差的，例如想要加入消息队列，就很不方便了；
 		为了实现解耦，可以采用读写分离的方案来操作。
 	*/
 	//写回客户端(旧版本)

@@ -30,15 +30,18 @@ type Server struct {
 	//当前Server的消息管理模块，用来绑定MsgId和对应的处理方法
 	msgHandler aiface.IMsgHandle
 }
+
 //============== 实现 ziface.IServer 里的全部接口方法 ========
 
 //============== 定义当前客户端链接的handle api ===========
-
 
 //Start 开启网络服务
 func (s *Server) Start() {
 	fmt.Printf("[START] Server name: %s,listenner at IP: %s, Port %d is starting\n", s.Name, s.IP, s.Port)
 	go func() {
+
+		//0. 开启消息队列及worker工作池
+		s.msgHandler.StartWorkerPool()
 		//1 获取一个TCP的Addr
 		addr, err := net.ResolveTCPAddr(s.IPVersion, fmt.Sprintf("%s:%d", s.IP, s.Port))
 		if err != nil {
@@ -70,14 +73,13 @@ func (s *Server) Start() {
 
 			//3.3 处理该新连接请求的 业务 方法， 此时应该有 handler 和 conn是绑定的
 			dealConn := NewConntion(conn, cid, s.msgHandler)
-			cid ++
+			cid++
 
 			//3.4 启动当前链接的处理业务
 			go dealConn.Start()
 
 		}
 	}()
-
 
 }
 
@@ -99,27 +101,24 @@ func (s *Server) Serve() {
 }
 
 //路由功能：给当前服务注册一个路由业务方法，供客户端链接处理使用
-func (s *Server)AddRouter(msgId uint32,router aiface.IRouter) {
+func (s *Server) AddRouter(msgId uint32, router aiface.IRouter) {
 	s.msgHandler.AddRouter(msgId, router)
 }
-
 
 //NewServer 创建一个服务器句柄
 func NewServer(name string) aiface.IServer {
 	printLogo()
 	utils.GlobalObject.Reload()
 	s := &Server{
-		Name :utils.GlobalObject.Name,
-		IPVersion:"tcp4",
-		IP:utils.GlobalObject.Host,
-		Port:utils.GlobalObject.TcpPort,
+		Name:       utils.GlobalObject.Name,
+		IPVersion:  "tcp4",
+		IP:         utils.GlobalObject.Host,
+		Port:       utils.GlobalObject.TcpPort,
 		msgHandler: NewMsgHandle(),
 	}
 
 	return s
 }
-
-
 
 func printLogo() {
 	fmt.Println(auroraLogo)

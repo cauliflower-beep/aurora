@@ -1,9 +1,9 @@
 package utils
 
 import (
+	"aurora/aiface"
 	"encoding/json"
 	"io/ioutil"
-	"aurora/aiface"
 )
 
 /*
@@ -13,18 +13,20 @@ import (
 type GlobalObj struct {
 	/*
 		Server
-	 */
-	TcpServer aiface.IServer //当前Zinx的全局Server对象
+	*/
+	TcpServer aiface.IServer //当前aurora的全局Server对象
 	Host      string         //当前服务器主机IP
 	TcpPort   int            //当前服务器主机监听端口号
 	Name      string         //当前服务器名称
 
 	/*
 		Aurora
-	 */
-	Version   string         //当前Aurora版本号
-	MaxPacketSize uint32	 //都需数据包的最大值
-	MaxConn       int    	//当前服务器主机允许的最大链接个数
+	*/
+	Version           string //当前Aurora版本号
+	MaxPacketSize     uint32 //都需数据包的最大值
+	MaxConn           int    //当前服务器主机允许的最大链接个数
+	WorkerPoolSize    uint32 // 当前业务工作worker池中的goroutine数量
+	MaxWorkerTaskSize uint32 // aurora框架允许每个消息队列中的最大任务数
 }
 
 /*
@@ -53,12 +55,14 @@ func init() {
 	//初始化GlobalObject变量，设置一些默认值
 	//如果配置文件没有加载，则取默认的值
 	GlobalObject = &GlobalObj{
-		Name:    "AuroraServerApp",
-		Version: "V0.4",
-		TcpPort: 7777,
-		Host:    "0.0.0.0",
-		MaxConn: 12000,
-		MaxPacketSize:4096,
+		Name:              "AuroraServerApp",
+		Version:           "V0.4",
+		TcpPort:           7777,
+		Host:              "0.0.0.0",
+		MaxConn:           12000,
+		MaxPacketSize:     4096,
+		WorkerPoolSize:    10,
+		MaxWorkerTaskSize: 1024,
 	}
 
 	//从配置文件中加载一些用户配置的参数
