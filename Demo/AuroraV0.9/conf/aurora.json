@@ -1,0 +1,7 @@
+{
+  "Name": "auroraV0.9 server APP ",
+  "Host": "127.0.0.1",
+  "TcpPort": 8999,
+  "MaxConn": 2,
+  "WorkerPoolSize": 10
+}

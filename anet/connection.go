@@ -14,6 +14,8 @@ import (
 */
 
 type Connection struct {
+	//当前conn隶属于哪个server，分布式场景中需要
+	TcpServer aiface.IServer
 	//当前连接的socket TCP套接字
 	Conn *net.TCPConn
 	//当前连接的ID 也可以称作为SessionID，ID全局唯一
@@ -37,8 +39,9 @@ type Connection struct {
 }
 
 //初始化连接模块的方法
-func NewConntion(conn *net.TCPConn, connID uint32, msgHandler aiface.IMsgHandle) *Connection {
+func NewConntion(server aiface.IServer, conn *net.TCPConn, connID uint32, msgHandler aiface.IMsgHandle) *Connection {
 	c := &Connection{
+		TcpServer:    server,
 		Conn:         conn,
 		ConnID:       connID,
 		isClosed:     false,
@@ -47,6 +50,14 @@ func NewConntion(conn *net.TCPConn, connID uint32, msgHandler aiface.IMsgHandle)
 		msgChan:      make(chan []byte),
 		//		SendBuffChan: make(chan []byte, 512),
 	}
+
+	// 将conn加入到connMgr中，connMgr是在server中的，需要考虑加入到哪个server的连接管理模块中
+	/*
+		每个连接都是属于某个server的，
+		目前只有一个server，可以不必判断某个连接属于哪个server，
+		如果后续需要做成分布式（多server）的，就需要知道连接是属于哪个server的
+	*/
+	c.TcpServer.GetConnMgr().AddConn(c)
 
 	return c
 }
@@ -150,6 +161,9 @@ func (c *Connection) Start() {
 	// 开启用于写回客户端数据流程的Goroutine
 	go c.StartWriter()
 
+	//按照开发者传递进来的创建连接之后需要调用的处理业务，执行对应hook函数
+	c.TcpServer.CallOnStart(c)
+
 	//for {
 	//	select {
 	//	case <- c.ExitBuffChan:
@@ -160,13 +174,16 @@ func (c *Connection) Start() {
 
 }
 
-//停止连接，结束当前连接状态M
+//停止连接，结束当前连接状态
 func (c *Connection) Stop() {
 	//1. 如果当前链接已经关闭
 	if c.isClosed == true {
 		return
 	}
 	c.isClosed = true
+
+	//调用开发者注册的 销毁连接之前需要执行的业务hook函数
+	c.TcpServer.CallOnStop(c)
 
 	//TODO Connection Stop() 如果用户注册了该链接的关闭回调业务，那么在此刻应该显示调用
 
@@ -178,6 +195,9 @@ func (c *Connection) Stop() {
 
 	//通知从缓冲队列读数据的业务，该链接已经关闭
 	//c.ExitBuffChan <- true
+
+	// 将当前连接从connMgr中删除掉
+	c.TcpServer.GetConnMgr().RemoveConn(c)
 
 	//关闭该链接全部管道 回收资源
 	close(c.ExitBuffChan)

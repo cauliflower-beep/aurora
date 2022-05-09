@@ -29,6 +29,13 @@ type Server struct {
 	Port int
 	//当前Server的消息管理模块，用来绑定MsgId和对应的处理方法
 	msgHandler aiface.IMsgHandle
+	//该server的连接管理器
+	ConnMgr aiface.IConnMgr
+
+	//该Server创建连接之后自动调用Hook函数
+	OnConnStart func(conn aiface.IConnection)
+	//该server销毁连接之前自动调用的Hook函数
+	OnConnStop func(conn aiface.IConnection)
 }
 
 //============== 实现 ziface.IServer 里的全部接口方法 ========
@@ -70,9 +77,19 @@ func (s *Server) Start() {
 				continue
 			}
 			//3.2 TODO Server.Start() 设置服务器最大连接控制,如果超过最大连接，那么则关闭此新的连接
+			/*
+				这个判断不能放在连接到来之前，不然会一直循环判断，消耗资源
+				等链接过来的时候再判断刚好
+			*/
+			if s.ConnMgr.Len() >= utils.GlobalObject.MaxConn {
+				//TODO 给客户端响应一个超出最大连接的错误
+				fmt.Println("too many conns max=", utils.GlobalObject.MaxConn)
+				conn.Close()
+				continue
+			}
 
 			//3.3 处理该新连接请求的 业务 方法， 此时应该有 handler 和 conn是绑定的
-			dealConn := NewConntion(conn, cid, s.msgHandler)
+			dealConn := NewConntion(s, conn, cid, s.msgHandler)
 			cid++
 
 			//3.4 启动当前链接的处理业务
@@ -87,7 +104,8 @@ func (s *Server) Start() {
 func (s *Server) Stop() {
 	fmt.Println("[STOP] Aurora server , name ", s.Name)
 
-	//将其他需要清理的连接信息或者其他信息 也要一并停止或者清理
+	//将其他需要清理的连接信息或者其他信息 也要一并停止或者清理回收
+	s.ConnMgr.ClearConn() // 由连接管理器清空所有连接
 }
 
 //Serve 运行服务
@@ -115,6 +133,7 @@ func NewServer(name string) aiface.IServer {
 		IP:         utils.GlobalObject.Host,
 		Port:       utils.GlobalObject.TcpPort,
 		msgHandler: NewMsgHandle(),
+		ConnMgr:    NewConnMgr(),
 	}
 
 	return s
@@ -124,4 +143,36 @@ func printLogo() {
 	fmt.Println(auroraLogo)
 	fmt.Println(topLine)
 	fmt.Println(bottomLine)
+}
+
+func (s *Server) GetConnMgr() aiface.IConnMgr {
+	return s.ConnMgr
+}
+
+//注册OnConnStart 钩子函数的方法
+func (s *Server) RegOnConnStart(hookFunc func(conn aiface.IConnection)) {
+	s.OnConnStart = hookFunc
+}
+
+//注册OnConnStop 钩子函数的方法
+func (s *Server) RegOnConnStop(hookFunc func(conn aiface.IConnection)) {
+	s.OnConnStop = hookFunc
+}
+
+//调用OnConnStart 钩子函数的方法
+func (s *Server) CallOnStart(conn aiface.IConnection) {
+	if s.OnConnStart != nil {
+		fmt.Println("----->Call OnConnStart...")
+		s.OnConnStart(conn)
+	}
+
+}
+
+//调用OnConnStop 钩子函数的方法
+func (s *Server) CallOnStop(conn aiface.IConnection) {
+	if s.OnConnStop != nil {
+		fmt.Println("----->Call OnConnStop...")
+		s.OnConnStop(conn)
+	}
+
 }
