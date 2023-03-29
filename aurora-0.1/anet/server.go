@@ -6,34 +6,30 @@ import (
 	"net"
 )
 
-var zinxLogo = `                                        
+var auroraLogo = `                                        
  _____  _   _   ____  ___    ____  _____ 
 (____ || | | | / ___)/ _ \  / ___)(____ |
 / ___ || |_| || |   | |_| || |    / ___ |
 \_____||____/ |_|    \___/ |_|    \_____|
                                         `
 var topLine = `┌───────────────────────────────────────────────────┐`
-var borderLine = `│`
 var bottomLine = `└───────────────────────────────────────────────────┘`
 
 //Server 接口实现，定义一个Server服务类
 type Server struct {
-	//服务器的名称
-	Name string
-	//tcp4 or other
-	IPVersion string
-	//服务绑定的IP地址
-	IP string
-	//服务绑定的端口
-	Port int
+	Name      string //服务器名称
+	IPVersion string //tcp4 or other
+	IP        string //服务绑定的IP地址
+	Port      int    //服务绑定的端口
 }
-//============== 实现 ziface.IServer 里的全部接口方法 ========
+
+//============== 实现 aiface.IServer 里的全部接口方法 ========
 
 //Start 开启网络服务
 func (s *Server) Start() {
 	fmt.Printf("[START] Server name: %s,listenner at IP: %s, Port %d is starting\n", s.Name, s.IP, s.Port)
 	go func() {
-		//1 获取一个TCP的Addr
+		//1 获取一个TCP的Addr解析对象
 		addr, err := net.ResolveTCPAddr(s.IPVersion, fmt.Sprintf("%s:%d", s.IP, s.Port))
 		if err != nil {
 			fmt.Println("resolve tcp addr err: ", err)
@@ -47,7 +43,7 @@ func (s *Server) Start() {
 		}
 
 		//已经监听成功
-		fmt.Println("start Zinx server  ", s.Name, " succ, now listenning...")
+		fmt.Println("start Aurora server  ", s.Name, " succ, now listenning...")
 
 		//3 启动server网络连接业务
 		for {
@@ -60,24 +56,22 @@ func (s *Server) Start() {
 			fmt.Println("Get conn remote addr = ", conn.RemoteAddr().String())
 
 			//3.2 链接建立，做一个最基本的内容回显业务
-			go func(){
-				for{
-					buf := make([]byte,512)
-					cnt,err := conn.Read(buf)
-					if err != nil{
-						fmt.Println("recv buf err",err)
+			go func() {
+				for {
+					buf := make([]byte, 512)
+					cnt, err := conn.Read(buf)
+					if err != nil {
+						fmt.Println("recv buf err", err)
 						continue
 					}
 					//若读取成功，则回显
-					if _,err:=conn.Write(buf[:cnt]);err!=nil{
-						fmt.Println("write back buf err",err)
+					if _, err := conn.Write(buf[:cnt]); err != nil {
+						fmt.Println("write back buf err", err)
 					}
 				}
 			}()
 		}
 	}()
-
-
 }
 
 //Stop 停止服务
@@ -102,19 +96,17 @@ func NewServer(name string) aiface.IServer {
 	printLogo()
 
 	s := &Server{
-		Name:       name,
-		IPVersion:  "tcp4",
-		IP:         "0.0.0.0",
-		Port:       8999,
+		Name:      name,
+		IPVersion: "tcp4",
+		IP:        "0.0.0.0",
+		Port:      8999,
 	}
 
 	return s
 }
 
-
-
 func printLogo() {
-	fmt.Println(zinxLogo)
+	fmt.Println(auroraLogo)
 	fmt.Println(topLine)
 	fmt.Println(bottomLine)
 }
