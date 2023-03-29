@@ -25,3 +25,12 @@ https://github.com/aceld/zinx/commit/46a2e95a3f3c5998e930792f81207a37ef43cec4
 `IMsgHandler`消息处理及协程池接口；
 
 `IClient`客户端接口。
+
+## 相关链接
+
+pc端文档：https://www.yuque.com/aceld/npyr8s/bgftov
+
+原创书籍：https://www.yuque.com/aceld
+
+开发接口文档：https://www.yuque.com/aceld/tsgooa/gx01meg5ow4pftac
+
