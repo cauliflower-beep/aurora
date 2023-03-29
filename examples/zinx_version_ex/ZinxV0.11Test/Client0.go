@@ -1,8 +1,8 @@
 package main
 
 import (
+	"aurora/apack"
 	"fmt"
-	"github.com/aceld/zinx/zpack"
 	"io"
 	"net"
 	"time"
@@ -25,8 +25,8 @@ func main() {
 
 	for {
 		//发封包message消息
-		dp := zpack.NewDataPack()
-		msg, _ := dp.Pack(zpack.NewMsgPackage(0, []byte("Zinx V0.8 Client0 Test Message")))
+		dp := apack.NewDataPack()
+		msg, _ := dp.Pack(apack.NewMsgPackage(0, []byte("Zinx V0.8 Client0 Test Message")))
 		_, err := conn.Write(msg)
 		if err != nil {
 			fmt.Println("write error err ", err)
@@ -49,7 +49,7 @@ func main() {
 
 		if msgHead.GetDataLen() > 0 {
 			//msg 是有data数据的，需要再次读取data数据
-			msg := msgHead.(*zpack.Message)
+			msg := msgHead.(*apack.Message)
 			msg.Data = make([]byte, msg.GetDataLen())
 
 			//根据dataLen从io中读取字节流

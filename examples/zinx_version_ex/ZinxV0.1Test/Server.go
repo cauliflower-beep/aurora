@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/aceld/zinx/znet"
+	"aurora/anet"
 )
 
 //Server 模块的测试函数
@@ -11,8 +11,8 @@ func main() {
 		服务端测试
 	*/
 	//1 创建一个server 句柄 s
-	// s := znet.NewServer("[zinx V0.1]")
-	s := znet.NewServer()
+	// s := anet.NewServer("[zinx V0.1]")
+	s := anet.NewServer()
 
 	//2 开启服务
 	s.Serve()

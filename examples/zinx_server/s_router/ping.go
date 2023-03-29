@@ -1,25 +1,25 @@
 package s_router
 
 import (
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zlog"
-	"github.com/aceld/zinx/znet"
+	"aurora/aiface"
+	"aurora/alog"
+	"aurora/anet"
 )
 
 //ping test 自定义路由
 type PingRouter struct {
-	znet.BaseRouter
+	anet.BaseRouter
 }
 
 //Ping Handle
-func (this *PingRouter) Handle(request ziface.IRequest) {
+func (this *PingRouter) Handle(request aiface.IRequest) {
 
-	zlog.Debug("Call PingRouter Handle")
+	alog.Debug("Call PingRouter Handle")
 	//先读取客户端的数据，再回写ping...ping...ping
-	zlog.Debug("recv from client : msgId=", request.GetMsgID(), ", data=", string(request.GetData()))
+	alog.Debug("recv from client : msgId=", request.GetMsgID(), ", data=", string(request.GetData()))
 
 	err := request.GetConnection().SendBuffMsg(2, []byte("pong...pong...pong[FromServer]"))
 	if err != nil {
-		zlog.Error(err)
+		alog.Error(err)
 	}
 }

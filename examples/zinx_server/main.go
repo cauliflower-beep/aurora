@@ -7,15 +7,15 @@
 package main
 
 import (
-	"github.com/aceld/zinx/examples/zinx_server/s_router"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zlog"
-	"github.com/aceld/zinx/znet"
+	"aurora/aiface"
+	"aurora/alog"
+	"aurora/anet"
+	"aurora/examples/zinx_server/s_router"
 )
 
 // 创建连接的时候执行
-func DoConnectionBegin(conn ziface.IConnection) {
-	zlog.Ins().InfoF("DoConnecionBegin is Called ...")
+func DoConnectionBegin(conn aiface.IConnection) {
+	alog.Ins().InfoF("DoConnecionBegin is Called ...")
 
 	//设置两个链接属性，在连接创建之后
 	conn.SetProperty("Name", "Aceld")
@@ -23,27 +23,27 @@ func DoConnectionBegin(conn ziface.IConnection) {
 
 	err := conn.SendMsg(2, []byte("DoConnection BEGIN..."))
 	if err != nil {
-		zlog.Error(err)
+		alog.Error(err)
 	}
 }
 
 // 连接断开的时候执行
-func DoConnectionLost(conn ziface.IConnection) {
+func DoConnectionLost(conn aiface.IConnection) {
 	//在连接销毁之前，查询conn的Name，Home属性
 	if name, err := conn.GetProperty("Name"); err == nil {
-		zlog.Ins().InfoF("Conn Property Name = %v", name)
+		alog.Ins().InfoF("Conn Property Name = %v", name)
 	}
 
 	if home, err := conn.GetProperty("Home"); err == nil {
-		zlog.Ins().InfoF("Conn Property Home = %v", home)
+		alog.Ins().InfoF("Conn Property Home = %v", home)
 	}
 
-	zlog.Ins().InfoF("Conn is Lost")
+	alog.Ins().InfoF("Conn is Lost")
 }
 
 func main() {
 	//创建一个server句柄
-	s := znet.NewServer()
+	s := anet.NewServer()
 
 	//注册链接hook回调函数
 	s.SetOnConnStart(DoConnectionBegin)

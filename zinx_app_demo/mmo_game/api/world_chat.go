@@ -3,19 +3,19 @@ package api
 import (
 	"fmt"
 
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/core"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/pb"
-	"github.com/aceld/zinx/znet"
+	"aurora/aiface"
+	"aurora/anet"
+	"aurora/aurora_app_demo/mmo_game/core"
+	"aurora/aurora_app_demo/mmo_game/pb"
 	"github.com/golang/protobuf/proto"
 )
 
 //世界聊天 路由业务
 type WorldChatApi struct {
-	znet.BaseRouter
+	anet.BaseRouter
 }
 
-func (*WorldChatApi) Handle(request ziface.IRequest) {
+func (*WorldChatApi) Handle(request aiface.IRequest) {
 	//1. 将客户端传来的proto协议解码
 	msg := &pb.Talk{}
 	err := proto.Unmarshal(request.GetData(), msg)

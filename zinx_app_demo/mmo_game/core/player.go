@@ -6,15 +6,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/pb"
+	"aurora/aiface"
+	"aurora/aurora_app_demo/mmo_game/pb"
 	"github.com/golang/protobuf/proto"
 )
 
 //玩家对象
 type Player struct {
 	PID  int32              //玩家ID
-	Conn ziface.IConnection //当前玩家的连接
+	Conn aiface.IConnection //当前玩家的连接
 	X    float32            //平面x坐标
 	Y    float32            //高度
 	Z    float32            //平面y坐标 (注意不是Y)
@@ -28,7 +28,7 @@ var PIDGen int32 = 1  //用来生成玩家ID的计数器
 var IDLock sync.Mutex //保护PIDGen的互斥机制
 
 //创建一个玩家对象
-func NewPlayer(conn ziface.IConnection) *Player {
+func NewPlayer(conn aiface.IConnection) *Player {
 	//生成一个PID
 	IDLock.Lock()
 	ID := PIDGen

@@ -1,12 +1,12 @@
 package main
 
 import (
+	"aurora/aiface"
+	"aurora/alog"
+	"aurora/anet"
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zlog"
-	"github.com/aceld/zinx/znet"
 	"os"
 	"os/signal"
 	"time"
@@ -73,7 +73,7 @@ func getHTLVCRCData(index int) []byte {
 }
 
 // 客户端自定义业务
-func business(conn ziface.IConnection) {
+func business(conn aiface.IConnection) {
 	var i int
 	for {
 		//buffer := getTLVData(i)
@@ -85,14 +85,14 @@ func business(conn ziface.IConnection) {
 }
 
 // 创建连接的时候执行
-func DoClientConnectedBegin(conn ziface.IConnection) {
-	zlog.Debug("DoConnecionBegin is Called ... ")
+func DoClientConnectedBegin(conn aiface.IConnection) {
+	alog.Debug("DoConnecionBegin is Called ... ")
 	go business(conn)
 }
 
 func main() {
 	//创建一个Client句柄，使用Zinx的API
-	client := znet.NewClient("127.0.0.1", 8999)
+	client := anet.NewClient("127.0.0.1", 8999)
 	//添加首次建立链接时的业务
 	client.SetOnConnStart(DoClientConnectedBegin)
 	//启动客户端client

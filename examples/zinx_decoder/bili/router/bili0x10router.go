@@ -1,27 +1,27 @@
 package router
 
 import (
+	"aurora/aiface"
+	"aurora/alog"
+	"aurora/anet"
+	"aurora/examples/zinx_decoder/bili/utils"
+	"aurora/examples/zinx_decoder/decode"
 	"bytes"
 	"encoding/hex"
-	"github.com/aceld/zinx/examples/zinx_decoder/bili/utils"
-	"github.com/aceld/zinx/examples/zinx_decoder/decode"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zlog"
-	"github.com/aceld/zinx/znet"
 )
 
 type Data0x10Router struct {
-	znet.BaseRouter
+	anet.BaseRouter
 }
 
-func (this *Data0x10Router) Handle(request ziface.IRequest) {
-	zlog.Ins().DebugF("Data0x10Router Handle %s \n", hex.EncodeToString(request.GetMessage().GetData()))
+func (this *Data0x10Router) Handle(request aiface.IRequest) {
+	alog.Ins().DebugF("Data0x10Router Handle %s \n", hex.EncodeToString(request.GetMessage().GetData()))
 	_response := request.GetResponse()
 	if _response != nil {
 		switch _response.(type) {
 		case decode.HtlvCrcData:
 			_data := _response.(decode.HtlvCrcData)
-			//zlog.Ins().DebugF("Data0x10Router %v \n", _data)
+			//alog.Ins().DebugF("Data0x10Router %v \n", _data)
 			buffer := pack10(_data)
 			request.GetConnection().Send(buffer)
 		}

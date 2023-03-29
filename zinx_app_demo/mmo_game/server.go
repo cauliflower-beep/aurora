@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/api"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/core"
-	"github.com/aceld/zinx/znet"
+	"aurora/aiface"
+	"aurora/anet"
+	"aurora/aurora_app_demo/mmo_game/api"
+	"aurora/aurora_app_demo/mmo_game/core"
 )
 
 //当客户端建立连接的时候的hook函数
-func OnConnecionAdd(conn ziface.IConnection) {
+func OnConnecionAdd(conn aiface.IConnection) {
 	//创建一个玩家
 	player := core.NewPlayer(conn)
 
@@ -33,16 +33,16 @@ func OnConnecionAdd(conn ziface.IConnection) {
 }
 
 //当客户端断开连接的时候的hook函数
-func OnConnectionLost(conn ziface.IConnection) {
+func OnConnectionLost(conn aiface.IConnection) {
 	//获取当前连接的PID属性
 	pID, _ := conn.GetProperty("pID")
 	var playerID int32
-	if pID != nil{
+	if pID != nil {
 		playerID = pID.(int32)
 	}
 
 	//根据pID获取对应的玩家对象
-		player := core.WorldMgrObj.GetPlayerByPID(playerID)
+	player := core.WorldMgrObj.GetPlayerByPID(playerID)
 
 	//触发玩家下线业务
 	if player != nil {
@@ -55,7 +55,7 @@ func OnConnectionLost(conn ziface.IConnection) {
 
 func main() {
 	//创建服务器句柄
-	s := znet.NewServer()
+	s := anet.NewServer()
 
 	//注册客户端连接建立和丢失函数
 	s.SetOnConnStart(OnConnecionAdd)

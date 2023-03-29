@@ -1,24 +1,24 @@
 package main
 
 import (
-	"github.com/aceld/zinx/examples/zinx_decoder/decode"
-	"github.com/aceld/zinx/examples/zinx_decoder/router"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zlog"
-	"github.com/aceld/zinx/znet"
+	"aurora/aiface"
+	"aurora/alog"
+	"aurora/anet"
+	"aurora/examples/zinx_decoder/decode"
+	"aurora/examples/zinx_decoder/router"
 )
 
-func DoConnectionBegin(conn ziface.IConnection) {
-	zlog.Ins().InfoF("DoConnectionBegin is Called ...")
+func DoConnectionBegin(conn aiface.IConnection) {
+	alog.Ins().InfoF("DoConnectionBegin is Called ...")
 }
 
-func DoConnectionLost(conn ziface.IConnection) {
-	zlog.Ins().InfoF("Conn is Lost")
+func DoConnectionLost(conn aiface.IConnection) {
+	alog.Ins().InfoF("Conn is Lost")
 }
 
 func main() {
 	//创建一个server句柄
-	s := znet.NewServer()
+	s := anet.NewServer()
 
 	//注册链接hook回调函数
 	s.SetOnConnStart(DoConnectionBegin)

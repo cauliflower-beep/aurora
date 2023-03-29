@@ -1,19 +1,19 @@
 package router
 
 import (
+	"aurora/aiface"
+	"aurora/anet"
+	"aurora/examples/zinx_decoder/bili/utils"
+	"aurora/examples/zinx_decoder/decode"
 	"bytes"
 	"fmt"
-	"github.com/aceld/zinx/examples/zinx_decoder/bili/utils"
-	"github.com/aceld/zinx/examples/zinx_decoder/decode"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/znet"
 )
 
 type Data0x15Router struct {
-	znet.BaseRouter
+	anet.BaseRouter
 }
 
-func (this *Data0x15Router) Handle(request ziface.IRequest) {
+func (this *Data0x15Router) Handle(request aiface.IRequest) {
 	fmt.Println("Data0x15Router Handle", request.GetMessage().GetData())
 	_response := request.GetResponse()
 	if _response != nil {

@@ -1,19 +1,19 @@
 package main
 
 import (
+	"aurora/aiface"
+	"aurora/anet"
 	"fmt"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/znet"
 	"time"
 )
 
 // 用户自定义的心跳检测消息处理方法
-func myHeartBeatMsg(conn ziface.IConnection) []byte {
+func myHeartBeatMsg(conn aiface.IConnection) []byte {
 	return []byte("heartbeat, I am server, I am alive")
 }
 
 // 用户自定义的远程连接不存活时的处理方法
-func myOnRemoteNotAlive(conn ziface.IConnection) {
+func myOnRemoteNotAlive(conn aiface.IConnection) {
 	fmt.Println("myOnRemoteNotAlive is Called, connID=", conn.GetConnID(), "remoteAddr = ", conn.RemoteAddr())
 	//关闭链接
 	conn.Stop()
@@ -21,21 +21,21 @@ func myOnRemoteNotAlive(conn ziface.IConnection) {
 
 // 用户自定义的心跳检测消息处理方法
 type myHeartBeatRouter struct {
-	znet.BaseRouter
+	anet.BaseRouter
 }
 
-func (r *myHeartBeatRouter) Handle(request ziface.IRequest) {
+func (r *myHeartBeatRouter) Handle(request aiface.IRequest) {
 	// 业务处理
 	fmt.Println("in MyHeartBeatRouter Handle, recv from client : msgId=", request.GetMsgID(), ", data=", string(request.GetData()))
 }
 
 func main() {
-	s := znet.NewServer()
+	s := anet.NewServer()
 
 	myHeartBeatMsgID := 88888
 
 	//启动心跳检测
-	s.StartHeartBeatWithOption(1*time.Second, &ziface.HeartBeatOption{
+	s.StartHeartBeatWithOption(1*time.Second, &aiface.HeartBeatOption{
 		MakeMsg:          myHeartBeatMsg,
 		OnRemoteNotAlive: myOnRemoteNotAlive,
 		Router:           &myHeartBeatRouter{},

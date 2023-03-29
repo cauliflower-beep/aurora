@@ -1,10 +1,10 @@
 package main
 
 import (
+	"aurora/aiface"
+	"aurora/anet"
+	"aurora/aurora_app_demo/mmo_game/pb"
 	"fmt"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/pb"
-	"github.com/aceld/zinx/znet"
 	"github.com/golang/protobuf/proto"
 	"os"
 	"os/signal"
@@ -12,10 +12,10 @@ import (
 )
 
 type PositionClientRouter struct {
-	znet.BaseRouter
+	anet.BaseRouter
 }
 
-func (this *PositionClientRouter) Handle(request ziface.IRequest) {
+func (this *PositionClientRouter) Handle(request aiface.IRequest) {
 	fmt.Println("Handle....")
 
 	msg := &pb.Position{}
@@ -29,7 +29,7 @@ func (this *PositionClientRouter) Handle(request ziface.IRequest) {
 }
 
 // 客户端自定义业务
-func business(conn ziface.IConnection) {
+func business(conn aiface.IConnection) {
 
 	for {
 
@@ -56,7 +56,7 @@ func business(conn ziface.IConnection) {
 }
 
 // 创建连接的时候执行
-func DoClientConnectedBegin(conn ziface.IConnection) {
+func DoClientConnectedBegin(conn aiface.IConnection) {
 	//设置两个链接属性，在连接创建之后
 	conn.SetProperty("Name", "刘丹冰")
 	conn.SetProperty("Home", "https://yuque.com/aceld")
@@ -73,7 +73,7 @@ func wait() {
 
 func main() {
 	//创建一个Client句柄，使用Zinx的API
-	client := znet.NewClient("127.0.0.1", 8999)
+	client := anet.NewClient("127.0.0.1", 8999)
 
 	//添加首次建立链接时的业务
 	client.SetOnConnStart(DoClientConnectedBegin)

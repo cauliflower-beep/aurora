@@ -1,20 +1,20 @@
 package main
 
 import (
+	"aurora/aiface"
+	"aurora/alog"
+	"aurora/anet"
+	"aurora/aurora_app_demo/mmo_game/pb"
 	"fmt"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/pb"
-	"github.com/aceld/zinx/zlog"
-	"github.com/aceld/zinx/znet"
 	"github.com/golang/protobuf/proto"
 )
 
 type PositionServerRouter struct {
-	znet.BaseRouter
+	anet.BaseRouter
 }
 
 //Ping Handle
-func (this *PositionServerRouter) Handle(request ziface.IRequest) {
+func (this *PositionServerRouter) Handle(request aiface.IRequest) {
 
 	msg := &pb.Position{}
 	err := proto.Unmarshal(request.GetData(), msg)
@@ -39,13 +39,13 @@ func (this *PositionServerRouter) Handle(request ziface.IRequest) {
 	err = request.GetConnection().SendMsg(0, data)
 
 	if err != nil {
-		zlog.Error(err)
+		alog.Error(err)
 	}
 }
 
 func main() {
 	//创建一个server句柄
-	s := znet.NewServer()
+	s := anet.NewServer()
 
 	//配置路由
 	s.AddRouter(0, &PositionServerRouter{})

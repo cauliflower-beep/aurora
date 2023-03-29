@@ -1,19 +1,19 @@
 package main
 
 import (
+	"aurora/aiface"
+	"aurora/alog"
+	"aurora/anet"
 	"fmt"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zlog"
-	"github.com/aceld/zinx/znet"
 	"time"
 )
 
 type TestRouter struct {
-	znet.BaseRouter
+	anet.BaseRouter
 }
 
 // PreHandle -
-func (t *TestRouter) PreHandle(req ziface.IRequest) {
+func (t *TestRouter) PreHandle(req aiface.IRequest) {
 	//使用场景模拟  完整路由计时
 	start := time.Now()
 
@@ -26,7 +26,7 @@ func (t *TestRouter) PreHandle(req ziface.IRequest) {
 }
 
 // Handle -
-func (t *TestRouter) Handle(req ziface.IRequest) {
+func (t *TestRouter) Handle(req aiface.IRequest) {
 	fmt.Println("--> Call Handle")
 
 	if err := req.GetConnection().SendMsg(0, []byte("test2")); err != nil {
@@ -35,7 +35,7 @@ func (t *TestRouter) Handle(req ziface.IRequest) {
 }
 
 // PostHandle -
-func (t *TestRouter) PostHandle(req ziface.IRequest) {
+func (t *TestRouter) PostHandle(req aiface.IRequest) {
 	fmt.Println("--> Call PostHandle")
 	if err := req.GetConnection().SendMsg(0, []byte("test3")); err != nil {
 		fmt.Println(err)
@@ -43,8 +43,8 @@ func (t *TestRouter) PostHandle(req ziface.IRequest) {
 }
 
 func main() {
-	s := znet.NewServer()
+	s := anet.NewServer()
 	s.AddRouter(1, &TestRouter{})
-	zlog.SetLogger(new(MyLogger))
+	alog.SetLogger(new(MyLogger))
 	s.Serve()
 }

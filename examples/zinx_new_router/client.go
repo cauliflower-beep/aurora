@@ -1,9 +1,9 @@
 package main
 
 import (
+	"aurora/aiface"
+	"aurora/apack"
 	"fmt"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zpack"
 	"io"
 	"net"
 	"time"
@@ -22,8 +22,8 @@ func main() {
 		return
 	}
 
-	dp := zpack.Factory().NewPack(ziface.ZinxDataPack)
-	msg, _ := dp.Pack(zpack.NewMsgPackage(1, []byte("client test message")))
+	dp := apack.Factory().NewPack(aiface.ZinxDataPack)
+	msg, _ := dp.Pack(apack.NewMsgPackage(1, []byte("client test message")))
 	_, err = conn.Write(msg)
 	if err != nil {
 		fmt.Println("client write err: ", err)
@@ -48,7 +48,7 @@ func main() {
 
 		if msgHead.GetDataLen() > 0 {
 			//msg 是有data数据的，需要再次读取data数据
-			msg := msgHead.(*zpack.Message)
+			msg := msgHead.(*apack.Message)
 			msg.Data = make([]byte, msg.GetDataLen())
 
 			//根据dataLen从io中读取字节流

@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/pb"
+	"aurora/aurora_app_demo/mmo_game/pb"
 	"github.com/golang/protobuf/proto"
 )
 

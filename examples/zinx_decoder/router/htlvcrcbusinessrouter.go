@@ -1,18 +1,18 @@
 package router
 
 import (
-	"github.com/aceld/zinx/examples/zinx_decoder/decode"
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zlog"
-	"github.com/aceld/zinx/znet"
+	"aurora/aiface"
+	"aurora/alog"
+	"aurora/anet"
+	"aurora/examples/zinx_decoder/decode"
 )
 
 type HtlvCrcBusinessRouter struct {
-	znet.BaseRouter
+	anet.BaseRouter
 }
 
-func (this *HtlvCrcBusinessRouter) Handle(request ziface.IRequest) {
-	//zlog.Ins().DebugF("Call HtlvCrcBusinessRouter Handle %d %s\n", request.GetMessage().GetMsgID(), hex.EncodeToString(request.GetMessage().GetData()))
+func (this *HtlvCrcBusinessRouter) Handle(request aiface.IRequest) {
+	//alog.Ins().DebugF("Call HtlvCrcBusinessRouter Handle %d %s\n", request.GetMessage().GetMsgID(), hex.EncodeToString(request.GetMessage().GetData()))
 	msgID := request.GetMessage().GetMsgID()
 	if msgID == 0x10 {
 		_response := request.GetResponse()
@@ -20,7 +20,7 @@ func (this *HtlvCrcBusinessRouter) Handle(request ziface.IRequest) {
 			switch _response.(type) {
 			case decode.HtlvCrcData:
 				tlvData := _response.(decode.HtlvCrcData)
-				zlog.Ins().DebugF("do msgid=0x10 data business %+v\n", tlvData)
+				alog.Ins().DebugF("do msgid=0x10 data business %+v\n", tlvData)
 			}
 		}
 	}

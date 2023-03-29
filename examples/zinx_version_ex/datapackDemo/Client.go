@@ -1,8 +1,8 @@
 package main
 
 import (
+	"aurora/apack"
 	"fmt"
-	"github.com/aceld/zinx/zpack"
 	"net"
 )
 
@@ -15,10 +15,10 @@ func main() {
 	}
 
 	//创建一个封包对象 dp
-	dp := zpack.NewDataPack()
+	dp := apack.NewDataPack()
 
 	//封装一个msg1包
-	msg1 := &zpack.Message{
+	msg1 := &apack.Message{
 		ID:      0,
 		DataLen: 5,
 		Data:    []byte{'h', 'e', 'l', 'l', 'o'},
@@ -30,7 +30,7 @@ func main() {
 		return
 	}
 
-	msg2 := &zpack.Message{
+	msg2 := &apack.Message{
 		ID:      1,
 		DataLen: 7,
 		Data:    []byte{'w', 'o', 'r', 'l', 'd', '!', '!'},

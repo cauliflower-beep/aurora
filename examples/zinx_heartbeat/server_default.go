@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/aceld/zinx/znet"
+	"aurora/anet"
 	"time"
 )
 
 func main() {
-	s := znet.NewServer()
+	s := anet.NewServer()
 
 	//启动心跳检测
 	s.StartHeartBeat(5 * time.Second)

@@ -3,19 +3,19 @@ package api
 import (
 	"fmt"
 
-	"github.com/aceld/zinx/ziface"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/core"
-	"github.com/aceld/zinx/zinx_app_demo/mmo_game/pb"
-	"github.com/aceld/zinx/znet"
+	"aurora/aiface"
+	"aurora/anet"
+	"aurora/aurora_app_demo/mmo_game/core"
+	"aurora/aurora_app_demo/mmo_game/pb"
 	"github.com/golang/protobuf/proto"
 )
 
 //玩家移动
 type MoveApi struct {
-	znet.BaseRouter
+	anet.BaseRouter
 }
 
-func (*MoveApi) Handle(request ziface.IRequest) {
+func (*MoveApi) Handle(request aiface.IRequest) {
 	//1. 将客户端传来的proto协议解码
 	msg := &pb.Position{}
 	err := proto.Unmarshal(request.GetData(), msg)

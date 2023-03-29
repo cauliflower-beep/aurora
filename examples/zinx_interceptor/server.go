@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/aceld/zinx/examples/zinx_interceptor/interceptors"
-	"github.com/aceld/zinx/examples/zinx_interceptor/router"
-	"github.com/aceld/zinx/znet"
+	"aurora/anet"
+	"aurora/examples/zinx_interceptor/interceptors"
+	"aurora/examples/zinx_interceptor/router"
 )
 
 func main() {
 	// 创建server 对象
-	server := znet.NewServer()
+	server := anet.NewServer()
 	// 添加路由映射
 	server.AddRouter(1, &router.HelloRouter{})
 	// 添加自定义拦截器
