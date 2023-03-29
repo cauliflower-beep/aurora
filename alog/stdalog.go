@@ -1,17 +1,17 @@
-// Package alog 主要提供zinx相关日志记录接口
+// Package alog 主要提供Aurora相关日志记录接口
 // 包括:
 //		stdzlog模块， 提供全局日志方法
 //		zlogger模块,  日志内部定义协议，均为对象类方法
 //
 // 当前文件描述:
-// @Title  stdzlog.go
+// @Title  stdalog.go
 // @Description    包裹zlogger日志方法，提供全局方法
 // @Author  Aceld - Thu Mar 11 10:32:29 CST 2019
 package alog
 
 /*
    全局默认提供一个Log对外句柄，可以直接使用API系列调用
-   全局日志对象 StdZinxLog
+   全局日志对象 StdAuroraLog
    注意：本文件方法不支持自定义，无法替换日志记录模式，如果需要自定义Logger:
 
    请使用如下方法:
@@ -21,107 +21,107 @@ package alog
 
 import "os"
 
-//StdZinxLog 创建全局log
-var StdZinxLog = NewZinxLog(os.Stderr, "", BitDefault)
+//StdAuroraLog 创建全局标准log
+var StdAuroraLog = NewAuroraLog(os.Stderr, "", BitDefault)
 
-//Flags 获取StdZinxLog 标记位
+//Flags 获取StdAuroraLog 标记位
 func Flags() int {
-	return StdZinxLog.Flags()
+	return StdAuroraLog.Flags()
 }
 
-//ResetFlags 设置StdZinxLog标记位
+//ResetFlags 设置StdAuroraLog标记位
 func ResetFlags(flag int) {
-	StdZinxLog.ResetFlags(flag)
+	StdAuroraLog.ResetFlags(flag)
 }
 
 //AddFlag 添加flag标记
 func AddFlag(flag int) {
-	StdZinxLog.AddFlag(flag)
+	StdAuroraLog.AddFlag(flag)
 }
 
-//SetPrefix 设置StdZinxLog 日志头前缀
+//SetPrefix 设置StdAuroraLog 日志头前缀
 func SetPrefix(prefix string) {
-	StdZinxLog.SetPrefix(prefix)
+	StdAuroraLog.SetPrefix(prefix)
 }
 
-//SetLogFile 设置StdZinxLog绑定的日志文件
+//SetLogFile 设置StdAuroraLog绑定的日志文件
 func SetLogFile(fileDir string, fileName string) {
-	StdZinxLog.SetLogFile(fileDir, fileName)
+	StdAuroraLog.SetLogFile(fileDir, fileName)
 }
 
 //CloseDebug 设置关闭debug
 func CloseDebug() {
-	StdZinxLog.CloseDebug()
+	StdAuroraLog.CloseDebug()
 }
 
 //OpenDebug 设置打开debug
 func OpenDebug() {
-	StdZinxLog.OpenDebug()
+	StdAuroraLog.OpenDebug()
 }
 
 //Debugf ====> Debug <====
 func Debugf(format string, v ...interface{}) {
-	StdZinxLog.Debugf(format, v...)
+	StdAuroraLog.Debugf(format, v...)
 }
 
 //Debug Debug
 func Debug(v ...interface{}) {
-	StdZinxLog.Debug(v...)
+	StdAuroraLog.Debug(v...)
 }
 
 //Infof ====> Info <====
 func Infof(format string, v ...interface{}) {
-	StdZinxLog.Infof(format, v...)
+	StdAuroraLog.Infof(format, v...)
 }
 
 //Info -
 func Info(v ...interface{}) {
-	StdZinxLog.Info(v...)
+	StdAuroraLog.Info(v...)
 }
 
 // ====> Warn <====
 func Warnf(format string, v ...interface{}) {
-	StdZinxLog.Warnf(format, v...)
+	StdAuroraLog.Warnf(format, v...)
 }
 
 func Warn(v ...interface{}) {
-	StdZinxLog.Warn(v...)
+	StdAuroraLog.Warn(v...)
 }
 
 // ====> Error <====
 func Errorf(format string, v ...interface{}) {
-	StdZinxLog.Errorf(format, v...)
+	StdAuroraLog.Errorf(format, v...)
 }
 
 func Error(v ...interface{}) {
-	StdZinxLog.Error(v...)
+	StdAuroraLog.Error(v...)
 }
 
 // ====> Fatal 需要终止程序 <====
 func Fatalf(format string, v ...interface{}) {
-	StdZinxLog.Fatalf(format, v...)
+	StdAuroraLog.Fatalf(format, v...)
 }
 
 func Fatal(v ...interface{}) {
-	StdZinxLog.Fatal(v...)
+	StdAuroraLog.Fatal(v...)
 }
 
 // ====> Panic  <====
 func Panicf(format string, v ...interface{}) {
-	StdZinxLog.Panicf(format, v...)
+	StdAuroraLog.Panicf(format, v...)
 }
 
 func Panic(v ...interface{}) {
-	StdZinxLog.Panic(v...)
+	StdAuroraLog.Panic(v...)
 }
 
 // ====> Stack  <====
 func Stack(v ...interface{}) {
-	StdZinxLog.Stack(v...)
+	StdAuroraLog.Stack(v...)
 }
 
 func init() {
-	//因为StdZinxLog对象 对所有输出方法做了一层包裹，所以在打印调用函数的时候，比正常的logger对象多一层调用
-	//一般的zinxLogger对象 calldDepth=2, StdZinxLog的calldDepth=3
-	StdZinxLog.calldDepth = 3
+	//因为StdAuroraLog对象 对所有输出方法做了一层包裹，所以在打印调用函数的时候，比正常的logger对象多一层调用
+	//一般的AuroraLogger对象 calldDepth=2, StdAuroraLog的calldDepth=3
+	StdAuroraLog.calldDepth = 3
 }

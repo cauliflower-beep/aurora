@@ -6,41 +6,41 @@ import (
 	"fmt"
 )
 
-var zLogInstance aiface.ILogger = new(zinxDefaultLog)
+var aLogInstance aiface.ILogger = new(auroraDefaultLog)
 
-type zinxDefaultLog struct{}
+type auroraDefaultLog struct{}
 
-func (log *zinxDefaultLog) InfoF(format string, v ...interface{}) {
-	StdZinxLog.Infof(format, v...)
+func (log *auroraDefaultLog) InfoF(format string, v ...interface{}) {
+	StdAuroraLog.Infof(format, v...)
 }
 
-func (log *zinxDefaultLog) ErrorF(format string, v ...interface{}) {
-	StdZinxLog.Errorf(format, v...)
+func (log *auroraDefaultLog) ErrorF(format string, v ...interface{}) {
+	StdAuroraLog.Errorf(format, v...)
 }
 
-func (log *zinxDefaultLog) DebugF(format string, v ...interface{}) {
-	StdZinxLog.Debugf(format, v...)
+func (log *auroraDefaultLog) DebugF(format string, v ...interface{}) {
+	StdAuroraLog.Debugf(format, v...)
 }
 
-func (log *zinxDefaultLog) InfoFX(ctx context.Context, format string, v ...interface{}) {
+func (log *auroraDefaultLog) InfoFX(ctx context.Context, format string, v ...interface{}) {
 	fmt.Println(ctx)
-	StdZinxLog.Infof(format, v...)
+	StdAuroraLog.Infof(format, v...)
 }
 
-func (log *zinxDefaultLog) ErrorFX(ctx context.Context, format string, v ...interface{}) {
+func (log *auroraDefaultLog) ErrorFX(ctx context.Context, format string, v ...interface{}) {
 	fmt.Println(ctx)
-	StdZinxLog.Errorf(format, v...)
+	StdAuroraLog.Errorf(format, v...)
 }
 
-func (log *zinxDefaultLog) DebugFX(ctx context.Context, format string, v ...interface{}) {
+func (log *auroraDefaultLog) DebugFX(ctx context.Context, format string, v ...interface{}) {
 	fmt.Println(ctx)
-	StdZinxLog.Debugf(format, v...)
+	StdAuroraLog.Debugf(format, v...)
 }
 
 func SetLogger(newlog aiface.ILogger) {
-	zLogInstance = newlog
+	aLogInstance = newlog
 }
 
 func Ins() aiface.ILogger {
-	return zLogInstance
+	return aLogInstance
 }

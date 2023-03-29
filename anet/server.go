@@ -25,16 +25,14 @@ var topLine = `┌────────────────────�
 var borderLine = `│`
 var bottomLine = `└──────────────────────────────────────────────────────┘`
 
-// Server 接口实现，定义一个Server服务类
+// Server
+// @Description: 接口实现，定义一个Server服务类
 type Server struct {
-	//服务器的名称
-	Name string
-	//tcp4 or other
-	IPVersion string
-	//服务绑定的IP地址
-	IP string
-	//服务绑定的端口
-	Port int
+	Name      string //服务器的名称
+	IPVersion string //tcp4 or other
+	IP        string //服务绑定的IP地址
+	Port      int    //服务绑定的端口
+
 	//当前Server的消息管理模块，用来绑定MsgID和对应的处理方法
 	msgHandler aiface.IMsgHandle
 	//当前Server的链接管理器
@@ -80,7 +78,6 @@ func NewServer(opts ...Option) aiface.IServer {
 	return s
 }
 
-// NewServer 创建一个服务器句柄
 func NewUserConfServer(config *aconf.Config, opts ...Option) aiface.IServer {
 	//打印logo
 	printLogo()
