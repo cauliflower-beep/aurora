@@ -2,26 +2,20 @@ package aiface
 
 import "net"
 
-//定义连接模块的抽象层
-type IConnection interface{
-	//启动链接 让当前的连接准备开始工作
-	Start()
-
-	//停止链接 结束当前连接的工作
-	Stop()
-
-	//获取当前连接的绑定socket comm
-	GetTCPConnection() *net.TCPConn
-
-	//获取当前连接模块的连接ID
-	GetConnID() uint32
-
-	//获取远程客户端的TCP状态 IP port
-	RemoteAddr() net.Addr
-
-	//发送数据，将数据发送给远程的客户端
-	Send(data []byte) error
+// IConnection
+//  @Description: 连接接口
+type IConnection interface {
+	Start()                         //启动连接，让当前连接开始工作
+	Stop()                          //停止连接，结束当前连接状态
+	GetConnID() uint32              //获取当前连接ID
+	RemoteAddr() net.Addr           //获取远程客户端地址信息
+	GetTCPConnection() *net.TCPConn //从当前连接获取原始的socket TCPConn
 }
 
-//定义一个统一处理链接业务的接口
+// HandFunc
+//  @Description: 统一处理连接业务的接口
+//  @Description: 想要指定一个conn处理业务，只需要定义一个HandFunc，然后和该链接绑定即可
+//  @param *net.TCPConn socket原生链接
+//  @param []byte 客户端请求的数据
+//  @param int 客户端请求的数据长度
 type HandFunc func(*net.TCPConn, []byte, int) error
