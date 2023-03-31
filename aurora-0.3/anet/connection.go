@@ -11,19 +11,19 @@ type Connection struct {
 	ConnID   uint32       //当前连接的ID 也可以称作为SessionID，ID全局唯一
 	isClosed bool         //当前连接的关闭状态
 
-	handleAPI aiface.HandFunc //该连接的处理方法api
+	Router aiface.IRouter //该连接的处理方法router
 
 	ExitBuffChan chan bool //告知该连接已经退出|停止的channel
 }
 
 // NewConnection
 //  @Description: 新建连接
-func NewConnection(conn *net.TCPConn, connID uint32, callbackApi aiface.HandFunc) *Connection {
+func NewConnection(conn *net.TCPConn, connID uint32, router aiface.IRouter) *Connection {
 	return &Connection{
 		Conn:         conn,
 		ConnID:       connID,
 		isClosed:     false,
-		handleAPI:    callbackApi,
+		Router:       router,
 		ExitBuffChan: make(chan bool, 1),
 	}
 }
@@ -37,19 +37,28 @@ func (c *Connection) StartReader() {
 
 	for {
 		buf := make([]byte, 512)
-		cnt, err := c.Conn.Read(buf)
+		_, err := c.Conn.Read(buf)
 		if err != nil {
 			fmt.Println("recv buf err|", err)
 			c.ExitBuffChan <- true
-			continue
+			//continue
+			break //todo这里应该是break吧?
 		}
 
-		//调用当前连接业务，这里执行的是当前conn绑定的 HandFunc
-		if err = c.handleAPI(c.Conn, buf, cnt); err != nil {
-			fmt.Printf("connID:%d handle is error! err:%v\n", c.ConnID, err)
-			c.ExitBuffChan <- true
-			return
+		/*
+			conn读完客户端数据之后，将数据和conn封装到一个Request中，作为Router的输入数据
+		*/
+		req := Request{
+			iConn: c,
+			data:  buf,
 		}
+
+		//调用当前连接业务，这里执行的是当前conn绑定的 Router
+		go func(r aiface.IRequest) {
+			c.Router.PreHandle(r)
+			c.Router.Handle(r)
+			c.Router.PostHandle(r)
+		}(&req)
 	}
 }
 

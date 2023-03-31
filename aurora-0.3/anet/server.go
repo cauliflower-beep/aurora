@@ -2,7 +2,6 @@ package anet
 
 import (
 	"aurora-v0.3/aiface"
-	"errors"
 	"fmt"
 	"net"
 	"time"
@@ -23,19 +22,21 @@ type Server struct {
 	IPVersion string //tcp4 or other
 	IP        string //服务绑定的IP地址
 	Port      int    //服务绑定的端口
+
+	Router aiface.IRouter //当前Server由服务器开发绑定的回调router，也就是Server注册的链接对应的处理业务
 }
 
-//============== 定义当前客户端链接的handle api ===========
+//NewServer 创建一个服务器句柄
+func NewServer(name string) aiface.IServer {
+	printLogo()
 
-// CallBackToClient
-//  @Description: 客户端消息回显业务
-func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
-	fmt.Println("[Conn Handle] CallBackToClient ...")
-	if _, err := conn.Write(data[:cnt]); err != nil {
-		fmt.Println("write back buf err|", err)
-		return errors.New("callBackToClient err")
+	return &Server{
+		Name:      name,
+		IPVersion: "tcp4",
+		IP:        "0.0.0.0",
+		Port:      8999,
+		Router:    nil,
 	}
-	return nil
 }
 
 //============== 实现 aiface.IServer 里的全部接口方法 ========
@@ -43,6 +44,7 @@ func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
 //Start 开启网络服务
 func (s *Server) Start() {
 	fmt.Printf("[START] Server name: %s,listenner at IP: %s, Port %d is starting\n", s.Name, s.IP, s.Port)
+	//开启一个goroutine去做服务端Listener业务
 	go func() {
 		//1 获取一个TCP的Addr解析对象
 		addr, err := net.ResolveTCPAddr(s.IPVersion, fmt.Sprintf("%s:%d", s.IP, s.Port))
@@ -74,8 +76,8 @@ func (s *Server) Start() {
 
 			// todo server.start()设置服务器最大连接控制，如果超过最大连接，则关闭此新的连接
 
-			// 处理该新连接请求的业务方法，此时应该把 handler 和 conn 绑定
-			dealConn := NewConnection(conn, cid, CallBackToClient)
+			// 处理该新连接请求的业务方法，此时应该把 Router 和 conn 绑定
+			dealConn := NewConnection(conn, cid, s.Router)
 			cid++
 			go dealConn.Start()
 		}
@@ -101,16 +103,10 @@ func (s *Server) Serve() {
 	}
 }
 
-//NewServer 创建一个服务器句柄
-func NewServer(name string) aiface.IServer {
-	printLogo()
-
-	return &Server{
-		Name:      name,
-		IPVersion: "tcp4",
-		IP:        "0.0.0.0",
-		Port:      8999,
-	}
+// AddRouter 路由功能
+func (s *Server) AddRouter(router aiface.IRouter) {
+	s.Router = router
+	fmt.Println("Add Server Router succ!")
 }
 
 func printLogo() {
