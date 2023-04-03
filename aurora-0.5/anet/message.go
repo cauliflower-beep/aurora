@@ -16,8 +16,8 @@ func NewMsgPackage(id uint32, data []byte) *Message {
 	}
 }
 
-// GetDataId 获取消息Id
-func (msg *Message) GetDataId() uint32 {
+// GetMsgId 获取消息Id
+func (msg *Message) GetMsgId() uint32 {
 	return msg.Id
 }
 
@@ -36,8 +36,8 @@ func (msg *Message) SetDataLen(len uint32) {
 	msg.DataLen = len
 }
 
-// SetDataId 设置消息Id
-func (msg *Message) SetDataId(msgId uint32) {
+// SetMsgId 设置消息Id
+func (msg *Message) SetMsgId(msgId uint32) {
 	msg.Id = msgId
 }
 
