@@ -2,6 +2,7 @@ package anet
 
 import (
 	"aurora-v0.4/aiface"
+	"aurora-v0.4/utils"
 	"fmt"
 	"net"
 )
@@ -38,7 +39,7 @@ func (c *Connection) StartReader() {
 	defer c.Stop()
 
 	for {
-		buf := make([]byte, 512)
+		buf := make([]byte, utils.GlobalObject.MaxPacketSize)
 		_, err := c.Conn.Read(buf)
 		if err != nil {
 			fmt.Println("recv buf err|", err)

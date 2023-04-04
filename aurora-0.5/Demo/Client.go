@@ -1,7 +1,9 @@
 package main
 
 import (
+	"aurora-v0.5/anet"
 	"fmt"
+	"io"
 	"net"
 	"time"
 )
@@ -18,20 +20,42 @@ func main() {
 
 	//连接调用write写数据
 	for {
-		_, err = conn.Write([]byte("hello aurora v0.5! "))
+		// 发送封包 message 消息
+		dp := anet.NewDataPack()
+		msg, _ := dp.Pack(anet.NewMsgPackage(0, []byte("hello aurora v0.5! ")))
+		_, err = conn.Write(msg)
 		if err != nil {
 			fmt.Println("write conn err", err)
 		}
 
-		buf := make([]byte, 512)
-		//var cnt int
-		_, err = conn.Read(buf)
+		// 接收服务器返回
+		// 先读出流中的head部分
+		headData := make([]byte, dp.GetHeadLen())
+		_, err = io.ReadFull(conn, headData)
 		if err != nil {
-			fmt.Println("read buf error")
+			fmt.Println("read head error|", err)
+		}
+
+		// 将headData字节流，拆包到msg中
+		msgHead, err := dp.Unpack(headData)
+		if err != nil {
+			fmt.Println("server unpack err|", err)
 			return
 		}
-		//fmt.Println(fmt.Sprintf("server call back:%scnt = %d", buf, cnt))
-		fmt.Println(string(buf))
+
+		if msgHead.GetDataLen() > 0 {
+			// msg 是有data数据的，需要再次读取data数据
+			serverMsg := msgHead.(*anet.Message)
+			serverMsg.Data = make([]byte, serverMsg.GetDataLen())
+
+			// 根据dataLen从io中读取字节流
+			_, err := io.ReadFull(conn, serverMsg.Data)
+			if err != nil {
+				fmt.Println("server unpack data err|", err)
+				return
+			}
+			fmt.Println("==> recv msg:ID=", serverMsg.Id, ", len=", serverMsg.DataLen, ", data=", string(serverMsg.Data))
+		}
 		//这里要加一个cpu阻塞，以便于cpu去处理别的事情，否则会一直卡在这个循环中，过分消耗资源
 		time.Sleep(1 * time.Second)
 	}

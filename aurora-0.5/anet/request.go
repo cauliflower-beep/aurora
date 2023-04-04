@@ -4,7 +4,7 @@ import "aurora-v0.5/aiface"
 
 type Request struct {
 	iConn aiface.IConnection //已经和客户端建立好的连接
-	data  []byte             //客户端请求的数据
+	msg   aiface.IMessage    //客户端请求的数据
 }
 
 //func NewRequest() *Request {
@@ -18,5 +18,10 @@ func (r *Request) GetConnection() aiface.IConnection {
 
 // GetData 获取请求消息的数据
 func (r *Request) GetData() []byte {
-	return r.data
+	return r.msg.GetData()
+}
+
+// GetMsgId 获取请求的消息Id
+func (r *Request) GetMsgId() uint32 {
+	return r.msg.GetMsgId()
 }
