@@ -1,8 +1,8 @@
 package main
 
 import (
-	"aurora-v0.6/aiface"
-	"aurora-v0.6/anet"
+	"aurora-v0.7/aiface"
+	"aurora-v0.7/anet"
 	"fmt"
 )
 
