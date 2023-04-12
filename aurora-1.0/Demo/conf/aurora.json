@@ -1,0 +1,9 @@
+{
+  "Host"      : "0.0.0.0",
+  "TcpPort"   : 8999,
+  "Name"      : "auroraServer",
+  "Version"   : "v0.9",
+
+  "MaxPacketSize": 10000,
+  "MaxConn" :  4096
+}
