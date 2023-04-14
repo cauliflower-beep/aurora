@@ -97,3 +97,24 @@ func (p *Player) BroadCastStartPosition() {
 	}
 	p.SendMsg(200, msg)
 }
+
+// Talk
+// @Description: 玩家发起世界聊天
+func (p *Player) Talk(content string) {
+	//1.组建msgId200 proto数据
+	msg := &pb.BroadCast{
+		Pid: p.Pid,
+		Tp:  1, //TP-1代表聊天广播
+		Data: &pb.BroadCast_Content{
+			Content: content,
+		},
+	}
+
+	//2.得到当前世界所有在线玩家
+	players := WorldMgrObj.GetAllPlayers()
+
+	//3.向所有玩家发送MsgId:200消息
+	for _, player := range players {
+		player.SendMsg(200, msg)
+	}
+}
