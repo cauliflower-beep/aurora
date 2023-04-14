@@ -25,16 +25,48 @@ desktop: 1920x1080 60Hz; virtual: 3840x1080 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
-UnloadTime: 0.609600 ms
+Initialize engine version: 5.4.1f1 (649f48bbbf0f)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: Intel(R) UHD Graphics 630 (ID=0x9bc5)
+    Vendor:   Intel
+    VRAM:     2111 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\Google.Protobuf.dll (this message is harmless)
+Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\Google.Protobuf.dll into Unity Child Domain
+Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\protobuf-net.dll (this message is harmless)
+Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\protobuf-net.dll into Unity Child Domain
+- Completed reload, in  0.036 seconds
+Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\System.dll (this message is harmless)
+desktop: 1920x1080 60Hz; virtual: 3840x1080 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+UnloadTime: 0.545700 ms
 Setting up 3 worker threads for Enlighten.
-  Thread -> id: 36cc -> priority: 1 
-  Thread -> id: 45d8 -> priority: 1 
-  Thread -> id: 4428 -> priority: 1 
+  Thread -> id: 4600 -> priority: 1 
+  Thread -> id: 3b18 -> priority: 1 
+  Thread -> id: 2378 -> priority: 1 
+<RI> Initialized touch support.
+UnloadTime: 0.578000 ms
+Setting up 3 worker threads for Enlighten.
+  Thread -> id: 1eb0 -> priority: 1 
+  Thread -> id: 244 -> priority: 1 
+  Thread -> id: 48f8 -> priority: 1 
 Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 3.707700 ms
+UnloadTime: 2.808300 ms
 
 Unloading 11 unused Assets to reduce memory usage. Loaded Objects now: 368.
-Total: 0.328500 ms (FindLiveObjects: 0.016200 ms CreateObjectMapping: 0.008900 ms MarkObjects: 0.157900 ms  DeleteObjects: 0.145200 ms)
+Total: 0.384900 ms (FindLiveObjects: 0.019600 ms CreateObjectMapping: 0.009700 ms MarkObjects: 0.188800 ms  DeleteObjects: 0.166200 ms)
 
 Parent of RectTransform is being set with parent property. Consider using the SetParent method instead, with the worldPositionStays argument set to false. This will retain local orientation and scale rather than world orientation and scale, which can prevent common UI scaling issues.
  
@@ -56,47 +88,19 @@ Player: { "pid": 1 }
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
 
+202 count:　1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
 Start Game
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
 
-Initialize engine version: 5.4.1f1 (649f48bbbf0f)
-GfxDevice: creating device client; threaded=1
-Direct3D:
-    Version:  Direct3D 11.0 [level 11.0]
-    Renderer: Intel(R) UHD Graphics 630 (ID=0x9bc5)
-    Vendor:   Intel
-    VRAM:     2111 MB
-Begin MonoManager ReloadAssembly
-Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.dll (this message is harmless)
-Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.dll into Unity Child Domain
-Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\Assembly-CSharp.dll (this message is harmless)
-Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
-Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.UI.dll (this message is harmless)
-Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
-Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
-Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
-Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\Google.Protobuf.dll (this message is harmless)
-Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\Google.Protobuf.dll into Unity Child Domain
-Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\protobuf-net.dll (this message is harmless)
-Loading E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\protobuf-net.dll into Unity Child Domain
-- Completed reload, in  0.038 seconds
-Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\System.Core.dll (this message is harmless)
-Platform assembly: E:\workspace\src\auroraTags\mmo_game\game_client\client_Data\Managed\System.dll (this message is harmless)
-desktop: 1920x1080 60Hz; virtual: 3840x1080 at 0,0
-<RI> Initializing input.
-<RI> Input initialized.
-<RI> Initialized touch support.
-UnloadTime: 0.596400 ms
-Setting up 3 worker threads for Enlighten.
-  Thread -> id: 3e3c -> priority: 1 
-  Thread -> id: 748 -> priority: 1 
-  Thread -> id: 4a28 -> priority: 1 
 Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 2.924600 ms
+UnloadTime: 2.846600 ms
 
 Unloading 11 unused Assets to reduce memory usage. Loaded Objects now: 368.
-Total: 0.458600 ms (FindLiveObjects: 0.023300 ms CreateObjectMapping: 0.009700 ms MarkObjects: 0.247600 ms  DeleteObjects: 0.177000 ms)
+Total: 0.418000 ms (FindLiveObjects: 0.041000 ms CreateObjectMapping: 0.012600 ms MarkObjects: 0.207500 ms  DeleteObjects: 0.156000 ms)
 
 Parent of RectTransform is being set with parent property. Consider using the SetParent method instead, with the worldPositionStays argument set to false. This will retain local orientation and scale rather than world orientation and scale, which can prevent common UI scaling issues.
  
@@ -114,11 +118,27 @@ PlayerController singleton already created!
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
 
+born player: 2 pos: { "x": 167, "z": 150 }
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+Parent of RectTransform is being set with parent property. Consider using the SetParent method instead, with the worldPositionStays argument set to false. This will retain local orientation and scale rather than world orientation and scale, which can prevent common UI scaling issues.
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
 Player: { "pid": 2 }
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
 
 Start Game
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+202 count:　2
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+Parent of RectTransform is being set with parent property. Consider using the SetParent method instead, with the worldPositionStays argument set to false. This will retain local orientation and scale rather than world orientation and scale, which can prevent common UI scaling issues.
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
 

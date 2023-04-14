@@ -118,3 +118,55 @@ func (p *Player) Talk(content string) {
 		player.SendMsg(200, msg)
 	}
 }
+
+func (p *Player) SyncSurrounding() {
+	//1 根据自己的位置，获取周围九宫格内的玩家pid
+	pids := WorldMgrObj.AoiMgr.GetPidByPos(p.X, p.Z)
+	//2 根据pid得到所有玩家对象
+	players := make([]*Player, 0, len(pids))
+	//3 给这些玩家发送msgId:200 的消息，暴露自己的位置
+	for _, pid := range pids {
+		players = append(players, WorldMgrObj.GetPlayerByPid(int32(pid)))
+	}
+	//3.1 组建msgId200 proto数据
+	msg := &pb.BroadCast{
+		Pid: p.Pid,
+		Tp:  2, //Tp-2代表广播坐标
+		Data: &pb.BroadCast_P{
+			P: &pb.Position{
+				X: p.X,
+				Y: p.Y,
+				Z: p.Z,
+				V: p.V,
+			},
+		},
+	}
+	//3.2 把自己的位置信息，发送给九宫格内的其他玩家
+	for _, player := range players {
+		player.SendMsg(200, msg)
+	}
+
+	//4 让周围九宫格内的玩家出现在自己的视野中
+	//4.1构建 message SyncPlayers数据
+	playersData := make([]*pb.Player, 0, len(players))
+	for _, player := range players {
+		p := &pb.Player{
+			Pid: player.Pid,
+			P: &pb.Position{
+				X: player.X,
+				Y: player.Y,
+				Z: player.Z,
+				V: player.V,
+			},
+		}
+		playersData = append(playersData, p)
+	}
+
+	//4.2 封装SyncPlayer protobuf数据
+	SyncPlayersMsg := &pb.SyncPlayers{
+		Ps: playersData[:], // 将playersData数据复制一份给Ps
+	}
+
+	//4.3 给当前玩家发送周围九宫格内的全部其他玩家数据
+	p.SendMsg(202, SyncPlayersMsg)
+}
