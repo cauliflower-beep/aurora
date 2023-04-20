@@ -31,9 +31,9 @@ func OnConnectionAdd(conn aiface.IConnection) {
 	fmt.Println("=====> Player pidId = ", player.Pid, " arrived ====")
 }
 
-// OnConnectionRemove
+// OnConnectionLost
 // @Description: 连接丢失之后的hook  todo
-func OnConnectionRemove(conn aiface.IConnection) {
+func OnConnectionLost(conn aiface.IConnection) {
 	pid, err := conn.GetProperty("pid")
 	if err != nil {
 		fmt.Println("get pid failed")
@@ -42,10 +42,12 @@ func OnConnectionRemove(conn aiface.IConnection) {
 	//========得到当前掉线的玩家
 	player := core.WorldMgrObj.Players[pid.(int32)]
 
-	//========将当前离线的玩家添从 WorldMgrObj 中删除
-	core.WorldMgrObj.RemovePlayer(player)
+	//触发玩家下线业务
+	if pid != nil {
+		player.LostConnection()
+	}
 
-	fmt.Println("=====> Player pidId = ", 0, " offline ====")
+	fmt.Println("=====> Player pidId = ", pid, " offline ====")
 }
 func main() {
 	//创建服务器句柄
@@ -53,7 +55,7 @@ func main() {
 
 	//注册客户端连接建立和丢失函数
 	s.SetOnConnStart(OnConnectionAdd)
-	s.SetOnConnStop(OnConnectionRemove)
+	s.SetOnConnStop(OnConnectionLost)
 
 	//注册路由
 	s.AddRouter(2, &api.WorldChatApi{}) //世界聊天

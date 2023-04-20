@@ -217,3 +217,23 @@ func (p *Player) GetSurroundingPlayers() []*Player {
 	}
 	return players
 }
+
+func (p *Player) LostConnection() {
+	//1.获取周围aoi九宫格内的玩家
+	players := p.GetSurroundingPlayers()
+
+	//2.封装MsgID:201消息
+	msg := &pb.SyncPid{
+		Pid: p.Pid,
+	}
+
+	//3.向周围玩家发送消息
+	for _, player := range players {
+		player.SendMsg(201, msg)
+	}
+
+	//4.世界管理器中将当前玩家从aoi删除
+	WorldMgrObj.AoiMgr.RemoveFromGridByPos(int(p.Pid), p.X, p.Z)
+	//WorldMgrObj.RemovePlayerByPid(p.Pid)
+	WorldMgrObj.RemovePlayer(p)
+}
