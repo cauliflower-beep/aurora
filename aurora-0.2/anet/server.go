@@ -17,7 +17,7 @@ var auroraLogo = `
 var topLine = `┌───────────────────────────────────────────────────┐`
 var bottomLine = `└───────────────────────────────────────────────────┘`
 
-//Server 接口实现，定义一个Server服务类
+// Server 接口实现，定义一个Server服务类
 type Server struct {
 	Name      string //服务器名称
 	IPVersion string //tcp4 or other
@@ -28,7 +28,8 @@ type Server struct {
 //============== 定义当前客户端链接的handle api ===========
 
 // CallBackToClient
-//  @Description: 客户端消息回显业务
+//
+//	@Description: 客户端消息回显业务
 func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
 	fmt.Println("[Conn Handle] CallBackToClient ...")
 	if _, err := conn.Write(data[:cnt]); err != nil {
@@ -40,7 +41,7 @@ func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
 
 //============== 实现 aiface.IServer 里的全部接口方法 ========
 
-//Start 开启网络服务
+// Start 开启网络服务
 func (s *Server) Start() {
 	fmt.Printf("[START] Server name: %s,listenner at IP: %s, Port %d is starting\n", s.Name, s.IP, s.Port)
 	go func() {
@@ -82,14 +83,14 @@ func (s *Server) Start() {
 	}()
 }
 
-//Stop 停止服务
+// Stop 停止服务
 func (s *Server) Stop() {
 	fmt.Println("[STOP] Aurora server , name ", s.Name)
 
 	// todo 将其他需要清理的连接信息或者其他信息 也要一并停止或者清理
 }
 
-//Serve 运行服务
+// Serve 运行服务
 func (s *Server) Serve() {
 	s.Start()
 
@@ -101,7 +102,7 @@ func (s *Server) Serve() {
 	}
 }
 
-//NewServer 创建一个服务器句柄
+// NewServer 创建一个服务器句柄
 func NewServer(name string) aiface.IServer {
 	printLogo()
 
