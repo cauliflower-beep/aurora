@@ -28,11 +28,11 @@ type HelloAuroraRouter struct {
 }
 
 func (ha *HelloAuroraRouter) Handle(req aiface.IRequest) {
-	fmt.Println("Call HelloZinxRouter Handle")
+	fmt.Println("Call HelloAuroraRouter Handle")
 	//先读取客户端的数据，再回写ping...ping...ping
 	fmt.Println("recv from client : msgId=", req.GetMsgId(), ", data=", string(req.GetData()))
 
-	err := req.GetConnection().SendMsg(1, []byte("Hello Aurora Router v0.9"))
+	err := req.GetConnection().SendMsg(1, []byte("Hello Aurora Router v1.0"))
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -44,7 +44,7 @@ func DoConnBegin(conn aiface.IConnection) {
 	fmt.Println("DoConnBegin is called ...")
 
 	//========在创建链接之后，设置两个链接属性===========
-	fmt.Println("Set conn Name, Home done!")
+	fmt.Println("Set conn Name, age done!")
 	conn.SetProperty("Name", "Kevin")
 	conn.SetProperty("age", 17)
 	//=============================================
@@ -62,7 +62,7 @@ func DoConnLost(conn aiface.IConnection) {
 		fmt.Println("Conn Property Name = ", name)
 	}
 
-	if home, err := conn.GetProperty("Home"); err == nil {
+	if home, err := conn.GetProperty("age"); err == nil {
 		fmt.Println("Conn Property Home = ", home)
 	}
 	//==============================================

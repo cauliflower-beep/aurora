@@ -37,6 +37,7 @@ func TestPack(t *testing.T) {
 					fmt.Println("read head error")
 					break
 				}
+				fmt.Printf("get headData res. headData|%v\n", headData)
 
 				//将headData字节流 拆包到msg中
 				msgHead, err := dp.Unpack(headData)
@@ -44,6 +45,7 @@ func TestPack(t *testing.T) {
 					fmt.Println("server unpack err:", err)
 					return
 				}
+				fmt.Printf("unpack headData res. msgHead|%v\n", msgHead)
 
 				if msgHead.GetDataLen() > 0 {
 					//msg 是有data数据的，需要再次读取data数据

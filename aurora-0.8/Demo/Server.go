@@ -28,11 +28,11 @@ type HelloAuroraRouter struct {
 }
 
 func (ha *HelloAuroraRouter) Handle(req aiface.IRequest) {
-	fmt.Println("Call HelloZinxRouter Handle")
+	fmt.Println("Call HelloAuroraRouter Handle")
 	//先读取客户端的数据，再回写ping...ping...ping
 	fmt.Println("recv from client : msgId=", req.GetMsgId(), ", data=", string(req.GetData()))
 
-	err := req.GetConnection().SendMsg(1, []byte("Hello Aurora Router v0.7"))
+	err := req.GetConnection().SendMsg(1, []byte("Hello Aurora Router v0.8"))
 	if err != nil {
 		fmt.Println(err)
 	}

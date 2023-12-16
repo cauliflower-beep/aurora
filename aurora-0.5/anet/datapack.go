@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"fmt"
 )
 
 // DataPack 封包拆包类实例，暂时不需要成员
@@ -35,27 +36,33 @@ func (dp *DataPack) Pack(msg aiface.IMessage) ([]byte, error) {
 		LittleEndian是一种字节序，它指定了在多字节数据类型(如int、float等)的存储中，最低有效字节(即最右边的字节)先存储在内存中。
 		这与BigEndian相反，后者将最高有效字节(即最左边的字节)存储在内存中。
 	*/
+	fmt.Printf("pack msg process begin. msg^%v|msg.DataLen^%d|msg.MsgID^%d|msg.Data^%v|dataBuff^%v\n",
+		msg, msg.GetDataLen(), msg.GetMsgId(), msg.GetData(), dataBuff)
 	//写dataLen
 	if err := binary.Write(dataBuff, binary.LittleEndian, msg.GetDataLen()); err != nil {
 		return nil, err
 	}
+	fmt.Printf("insert dataLen to pack res. dataBuff|%v\n", dataBuff.Bytes())
 
 	//写msgID
 	if err := binary.Write(dataBuff, binary.LittleEndian, msg.GetMsgId()); err != nil {
 		return nil, err
 	}
+	fmt.Printf("insert msgId to pack res. dataBuff|%v\n", dataBuff.Bytes())
 
 	//写data数据
 	if err := binary.Write(dataBuff, binary.LittleEndian, msg.GetData()); err != nil {
 		return nil, err
 	}
+	fmt.Printf("insert data to pack res. dataBuff|%v\n", dataBuff.Bytes())
 	return dataBuff.Bytes(), nil
 }
 
-// Unpack 拆包(解压数据)
+// Unpack 拆包(解压数据) 将二进制数据还原成 实现了 IMessage 接口的对象
 func (dp *DataPack) Unpack(binaryData []byte) (aiface.IMessage, error) {
 	//创建一个从输入获取二进制数据的ioReader
 	dataBuff := bytes.NewReader(binaryData)
+	fmt.Printf("dataBuff|%v\n", dataBuff)
 
 	/*
 		拆包的时候是分两次过程的，第二次依赖第一次的dataLen结果。
@@ -63,18 +70,24 @@ func (dp *DataPack) Unpack(binaryData []byte) (aiface.IMessage, error) {
 		之后调用者再根据dataLen继续从io流中读取body中的数据
 	*/
 
-	//只解压head的信息，得到dataLen/msgId
+	//只解压head的信息，得到dataLen|msgId
 	msg := &Message{}
 
-	//读dataLen
+	/*
+		读dataLen
+		这里能正确把DataLen的值读到 msg.DataLen 字段中，跟 msg.DataLen 的类型有关
+		它是 uint32 类型的，所以会把前4个字节的值读出来赋值给 msg.DataLen
+	*/
 	if err := binary.Read(dataBuff, binary.LittleEndian, &msg.DataLen); err != nil {
 		return nil, err
 	}
+	fmt.Printf("dataBuff|%v^msg.DataLen|%d\n", dataBuff, msg.DataLen)
 
 	//读msgId
 	if err := binary.Read(dataBuff, binary.LittleEndian, &msg.Id); err != nil {
 		return nil, err
 	}
+	fmt.Printf("dataBuff|%v^msg.DataId|%d\n", dataBuff, msg.Id)
 
 	//判断dataLen的长度是否超出我们允许的最大包长度
 	if utils.GlobalObject.MaxPacketSize > 0 && msg.DataLen > utils.GlobalObject.MaxPacketSize {

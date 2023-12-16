@@ -28,7 +28,7 @@ type HelloAuroraRouter struct {
 }
 
 func (ha *HelloAuroraRouter) Handle(req aiface.IRequest) {
-	fmt.Println("Call HelloZinxRouter Handle")
+	fmt.Println("Call HelloAuroraRouter Handle")
 	//先读取客户端的数据，再回写ping...ping...ping
 	fmt.Println("recv from client : msgId=", req.GetMsgId(), ", data=", string(req.GetData()))
 

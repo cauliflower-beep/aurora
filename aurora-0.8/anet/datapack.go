@@ -63,7 +63,7 @@ func (dp *DataPack) Unpack(binaryData []byte) (aiface.IMessage, error) {
 		之后调用者再根据dataLen继续从io流中读取body中的数据
 	*/
 
-	//只解压head的信息，得到dataLen/msgId
+	//只解压head的信息，得到dataLen|msgId
 	msg := &Message{}
 
 	//读dataLen

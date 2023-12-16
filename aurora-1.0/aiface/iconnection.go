@@ -17,6 +17,7 @@ type IConnection interface {
 	/*
 		使用链接处理的时候，希望和链接绑定一些用户的数据，或者参数
 		所以这里添加了一些给链接设定属性参数的方法
+		是不是莫名熟悉呢？在优品做智能预警的时候，也需要在请求参数中加上一些客户端标识，来区分ios或者安卓等，方便调试
 	*/
 	SetProperty(key string, value interface{})   //设置链接属性
 	GetProperty(key string) (interface{}, error) //获取链接属性

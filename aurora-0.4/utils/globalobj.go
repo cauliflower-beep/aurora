@@ -3,6 +3,7 @@ package utils
 import (
 	"aurora-v0.4/aiface"
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
@@ -50,6 +51,7 @@ func (g *GlobalObj) ReloadConf() {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("global Conf|%s\n", string(data))
 	// 将json数据解析到struct中
 	//fmt.Printf("json :%s\n",data)
 	err = json.Unmarshal(data, &GlobalObject)

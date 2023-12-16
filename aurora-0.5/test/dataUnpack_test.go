@@ -2,7 +2,10 @@ package test
 
 import (
 	"aurora-v0.5/anet"
+	"bytes"
+	"encoding/binary"
 	"fmt"
+	"io"
 	"net"
 	"testing"
 )
@@ -31,6 +34,7 @@ func TestUnpack(t *testing.T) {
 		fmt.Println("client pack msg1 err:", err)
 		return
 	}
+	fmt.Printf("pack res. sendData1|%v\n", sendData1)
 
 	msg2 := &anet.Message{
 		Id:      1,
@@ -42,13 +46,48 @@ func TestUnpack(t *testing.T) {
 		fmt.Println("client temp msg2 err:", err)
 		return
 	}
+	fmt.Printf("pack res. sendData2|%v\n", sendData2)
 
 	//将sendData1，和 sendData2 拼接一起，组成粘包
 	sendData1 = append(sendData1, sendData2...)
+	fmt.Printf("TCP stream. sendData|%v\n", sendData1)
 
 	//向服务器端写数据
 	_, _ = conn.Write(sendData1)
 
 	//客户端阻塞
 	select {}
+}
+
+// TestBinaryRead go test -run TestBinaryRead -v
+func TestBinaryRead(t *testing.T) {
+	type Msg struct {
+		DataLen uint32
+		Id      uint32
+		Data    uint32
+	}
+	msg := &Msg{}
+	binaryData := []byte{7, 0, 0, 0, 1, 0, 0, 0}
+	dataBuff := bytes.NewReader(binaryData)
+
+	// 读取dataLen
+	err := binary.Read(dataBuff, binary.LittleEndian, &msg.DataLen)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("dataLen|%d\n", msg.DataLen)
+
+	// dataLen读完之后，下次读取的位置被移动到了前4个字节之后，所以再读就是从第5个字节开始的
+	_ = binary.Read(dataBuff, binary.LittleEndian, &msg.Id)
+	fmt.Printf("Id|%d\n", msg.Id)
+
+	// 此时8个字节都已经读完了，再读就是空值
+	_ = binary.Read(dataBuff, binary.LittleEndian, &msg.Data)
+	fmt.Printf("Data|%d\n", msg.Data)
+
+	// 如果想从头开始读，可以用 Seek 方法将位置重置
+	_, _ = dataBuff.Seek(0, io.SeekStart)
+	_ = binary.Read(dataBuff, binary.LittleEndian, &msg.Data)
+	fmt.Printf("Data|%d\n", msg.Data)
 }
