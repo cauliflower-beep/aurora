@@ -1,1 +1,6 @@
 .idea
+
+mmo_game/game_client/client_Data/
+
+mmo_game/mmo_game_log/
+*.log
